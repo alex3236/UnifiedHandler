@@ -56,6 +56,12 @@ player_joined:
 
 就是这么简单——你只写了需要修改的部分，其他所有行为都原封不动。
 
+> [!TIP]
+> Feature 和 Base 有同一个字段时怎么处理？
+>
+> - **列表类字段**（`patterns`、`regex_substitutions`、`pseudo_players` 等）——**追加**。Feature 的内容会加在 Base 的内容后面，两边都生效。比如 Base 和 Feature 各写了一条 `player_joined` 的 `patterns`，两条都能检测到。
+> - **标量类字段**（`name_validation`、`strip_ansi`、`message_format` 等）——**覆盖**。Feature 的值会替换 Base 的值。比如 Feature 里写了 `name_validation`，Base 的那个就失效了。多个 Feature 同时存在时，`config.yml` 里靠后的说了算。
+
 ## 写一个 Base Profile
 
 Base profile 有两种写法：
@@ -80,6 +86,14 @@ player_joined:
 ```
 
 不写的字段会自动沿用 `extends` 指向的 handler 的行为。
+
+> [!TIP]
+> 你写在 profile 里的字段和父 handler（比如 `forge_handler`）的关系：
+>
+> - **列表类字段**（`patterns`、`regex_substitutions` 等）——**追加在父 handler 之后**。比如你写了一条 `player_joined` 的 `pattern`，它会和 `forge_handler` 自带的加入检测一起生效，不是替换。这对于适配那些「大部分日志格式和原版一样、只有个别行不同」的服务端分支特别方便——十几行 YAML 就够。
+> - **标量类字段**（`name_validation`、`message_format` 等）——**覆盖父 handler**。你写了就以你的为准，父 handler 的值不再使用。
+>
+> 如果还启用了 Feature，Feature 会在这之上继续叠加（和上文「写一个 Feature」一节的规则相同）。
 
 ### 完整模式（Full Profile）
 

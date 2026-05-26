@@ -56,6 +56,12 @@ Then add `my_server_join` to the `features` list in `config.yml`. That's it.
 
 You only wrote what you needed to change. Everything else stays as-is.
 
+> [!TIP]
+> What if a Feature and the Base define the same field?
+>
+> - **List fields** (`patterns`, `regex_substitutions`, `pseudo_players`, etc.) — **appended**. The Feature's content is added after the Base's. Both take effect. For example, if both the Base and Feature define `player_joined` patterns, both are checked.
+> - **Scalar fields** (`name_validation`, `strip_ansi`, `message_format`, etc.) — **overwritten**. The Feature's value replaces the Base's. For example, writing `name_validation` in a Feature invalidates the Base's version. When multiple Features set the same field, the one listed last in `config.yml` wins.
+
 ## Writing a Base Profile
 
 Two ways to write one:
@@ -80,6 +86,14 @@ player_joined:
 ```
 
 Fields you leave out will keep the behavior from `extends`.
+
+> [!TIP]
+> How fields in your profile interact with the parent handler (e.g., `forge_handler`):
+>
+> - **List fields** (`patterns`, `regex_substitutions`, etc.) — **appended after the parent handler**. If you write a `player_joined` pattern, it runs alongside `forge_handler`'s built-in join detection — it doesn't replace it. This is what makes adapting server forks so efficient: when most log lines look standard but a handful differ, you only need a dozen lines of YAML.
+> - **Scalar fields** (`name_validation`, `message_format`, etc.) — **overwrite the parent handler**. Whatever you set takes priority, and the parent's value is discarded.
+>
+> If Features are also enabled, they layer on top following the same rules explained in the "Writing a Feature" section above.
 
 ### Full Profile mode
 
