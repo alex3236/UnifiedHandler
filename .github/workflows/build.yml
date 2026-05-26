@@ -1,0 +1,54 @@
+name: Build and Release
+
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install mcdreforged pytest
+
+      - name: Run tests
+        run: python -m pytest tests/ -v
+
+      - name: Pack plugin
+        run: python -m mcdreforged pack
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: UnifiedHandler
+          path: '*.mcdr'
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get previous tag
+        id: prev
+        run: |
+          prev=$(git tag --sort=-v:refname | grep -v "^${{ github.ref_name }}$" | head -1)
+          echo "tag=$prev" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: UnifiedHandler
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          body: |
+            ${{ github.event.head_commit.message }}
+
+            **Full Changelog**: https://github.com/${{ github.repository }}/compare/${{ steps.prev.outputs.tag }}...${{ github.ref_name }}
+          files: '*.mcdr'

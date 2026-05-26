@@ -1,0 +1,14 @@
+name: "cleanroom_fix"
+version: "1.0.0"
+changelog: "v1.0.0: Initial release"
+description: "适配 Cleanroom MC（Forge 的 Java 21 分支）：logger name 为空时输出空方括号 []"
+extends: "forge_handler"
+
+# log_format 覆写 — 当 ForgeHandler 无法解析 Cleanroom 特有的空 [] 日志行时降级接管
+log_format:
+  pattern: '\[(?P<hour>\d+):(?P<min>\d+):(?P<sec>\d+)\] \[(?P<thread>[^\[]+)/(?P<logging>[^\[]+)\]( \[.*?\])?: (?P<content>.*)'
+
+# fallback 接管后的玩家消息解析
+player_message:
+  patterns:
+    - '(\[Not Secure\] )?<(?P<name>[^>]+)> (?P<message>.*)'

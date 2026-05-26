@@ -1,0 +1,15 @@
+name: "chat_prefixes"
+version: "1.0.0"
+changelog: "v1.0.0: Merged from TitlePrefixHandler and VanillaTeamHandler"
+description: "支持 Team 前缀和称号前缀的玩家消息解析"
+
+# TitlePrefix: 去除第三个括号段（称号前缀对日志行的干扰）
+pre_parse:
+  regex_substitutions:
+    - pattern: '^(.*?\]:\s*)(?:\[[^]]+\]\s*)+(<[^>]*>.*)$'
+      replacement: '\1\2'
+
+# VanillaTeam: 解析 <[Team]Name> 格式的玩家消息
+player_message:
+  patterns:
+    - '(\[Not Secure\] )?<\[\w+\](?P<name>[^>]+)> (?P<message>.*)'

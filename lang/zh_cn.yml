@@ -1,0 +1,33 @@
+unified_handler:
+  on_load: "统一处理器已加载"
+  base_handler: "基础处理器：{}"
+  features: "功能特性：{}"
+  handler_registered: "统一处理器注册成功"
+  base_not_found: "基础处理器 '{}' 未找到，回退到 basic_handler"
+  base_profile_not_found: "基础 profile '{}' 未找到，回退到 basic_handler"
+  feature_not_found: "功能配置 '{}' 未找到，跳过"
+  profile_loaded: "已加载 {} 个功能配置"
+  auto_detected: "自动检测到处理器：{}"
+  derived_base: "派生基础处理器 '{}' 继承父处理器 '{}'"
+  extends_not_found: "父处理器 '{}' 未找到，回退到 basic_handler"
+  permission_denied: "§c权限不足§r"
+  sync:
+    builtin_dir_not_found: "内置 profiles 目录未找到：{}"
+    installed_profile: "已安装内置 profile：{}/{}"
+    update_available: '内置 profile 有可用更新："{}"（v{} → v{}）'
+    changelog_prefix: "  更新日志：{}"
+    update_instruction: '  更新方法：删除 "{}" 并重载插件'
+  reload:
+    reloaded: "统一处理器配置已重载"
+  help:
+    unified_handler: "管理统一处理器插件"
+    reload: "重载统一处理器配置"
+    status: "显示当前处理器配置"
+  status:
+    title: "§b统一处理器§r"
+    auto_format: "auto → {}"
+    line: "  {}：§e{}§r"
+    base: "基础处理器"
+    features: "启用的功能"
+    none: "（无）"
+    mcdr_handler: "MCDR 配置的处理器"

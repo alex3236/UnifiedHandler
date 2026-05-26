@@ -1,0 +1,12 @@
+name: "leaves_fix"
+version: "1.0.0"
+changelog: "v1.0.0: Initial release"
+description: "适配 Leaves（Paper fork）：去除 ANSI 转义序列 + 更精确的离线检测"
+extends: "bukkit_handler"
+
+pre_parse:
+  strip_ansi: true
+
+player_left:
+  patterns:
+    - '(?P<name>[^ ]+) lost connection: .+'

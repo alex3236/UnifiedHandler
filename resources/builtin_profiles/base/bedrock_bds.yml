@@ -1,0 +1,56 @@
+name: "bedrock_bds"
+version: "1.0.0"
+changelog: "v1.0.0: Initial release"
+description: "Bedrock Dedicated Server 完整 handler 定义"
+
+log_format:
+  pattern: '\[(?P<year>\d{4})-(?P<month>\d{2})-(?P<day>\d{2}) (?P<hour>\d{2}):(?P<min>\d{2}):(?P<sec>\d{2}).\d+ (?P<logging>\w+)\] \[(?P<thread>[^\]]+)\] (?P<content>.*)'
+
+pre_parse:
+  regex_substitutions:
+    - pattern: '\x1b\[[0-9;?]*[A-Za-z]'
+      replacement: ''
+    - pattern: '[\x00\x08\x1F\x7F]'
+      replacement: ''
+
+player_message:
+  patterns:
+    - '<(?P<name>[^>]+)> (?P<message>.*)'
+  name_validation: '.{3,16}'
+  quote_player_names: true
+  ignore_content_prefixes:
+    - /
+
+player_joined:
+  patterns:
+    - 'Player Spawned: (?P<name>.+) xuid: (?P<xuid>\d+)'
+
+player_left:
+  patterns:
+    - 'Player disconnected: (?P<name>.+), xuid: (?P<xuid>\d+)'
+
+server_version:
+  pattern: 'Version:? (?P<version>.+)\(.*\)'
+
+server_address:
+  pattern: 'IPv4 supported, port: (?P<port>\d+)'
+  detection_mode: first_only
+
+server_startup_done:
+  patterns:
+    - 'Server started\.'
+
+rcon_started:
+  enabled: false
+
+server_stopping:
+  patterns:
+    - 'Stopping server\.\.\.'
+
+commands:
+  stop: stop
+  send_message:
+    template: 'tellraw {target} {message}'
+  broadcast:
+    template: 'tellraw @a {message}'
+  message_format: bedrock_rawtext

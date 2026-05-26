@@ -1,0 +1,19 @@
+{
+    "id": "unified_handler",
+    "version": "1.0.0",
+    "name": "Unified Handler",
+    "description": {
+        "en_us": "A unified server handler with YAML-profile-driven features. One base for server adaptation, multiple features for functionality.",
+        "zh_cn": "基于 Profile 驱动的统一服务端处理器。一个 Base 适配服务端，多个 Feature 叠加功能。"
+    },
+    "author": "MCDReforged Community",
+    "link": "https://github.com/MCDReforged",
+    "dependencies": {
+        "mcdreforged": ">=2.13.0"
+    },
+    "resources": [
+        "lang",
+        "resources",
+        "LICENSE"
+    ]
+}

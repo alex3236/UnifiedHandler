@@ -1,0 +1,369 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/MCDReforged/UnifiedHandler/main/profile.schema.json",
+  "title": "Unified Handler Profile Schema",
+  "description": "JSON Schema for UnifiedHandler base and feature profiles. Validates both Base (Full/Derived) and Feature YAML files under resources/builtin_profiles/.",
+  "type": "object",
+  "required": ["name", "version"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Unique profile identifier. Used as the filename stem (without .yml) and referenced in config.yml under base_handler or features."
+    },
+    "version": {
+      "type": "string",
+      "description": "SemVer-like version string (e.g. '1.0.0'). Used by the sync-on-load mechanism to detect builtin updates; compared lexicographically by tuple.",
+      "pattern": "^\\d+(\\.\\d+)*$"
+    },
+    "changelog": {
+      "type": "string",
+      "description": "Human-readable changelog shown in the [WARNING] update-available message when a builtin profile has a newer version."
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable description of what this profile does."
+    },
+    "extends": {
+      "type": "string",
+      "description": "Parent handler name. Only valid in base profiles. The profile inherits all behaviour from the parent MCDR handler and only overrides the fields listed below. Examples: 'forge_handler', 'bukkit_handler', 'velocity_handler', 'vanilla_handler'. When omitted, the profile is a Full Profile built from BasicHandler (e.g. bedrock_bds)."
+    },
+    "log_format": {
+      "$ref": "#/$defs/log_format"
+    },
+    "pre_parse": {
+      "$ref": "#/$defs/pre_parse"
+    },
+    "player_message": {
+      "$ref": "#/$defs/player_message"
+    },
+    "parse_server_stdout": {
+      "$ref": "#/$defs/parse_server_stdout"
+    },
+    "player_joined": {
+      "$ref": "#/$defs/join_leave"
+    },
+    "player_left": {
+      "$ref": "#/$defs/join_leave"
+    },
+    "server_version": {
+      "$ref": "#/$defs/server_version"
+    },
+    "server_address": {
+      "$ref": "#/$defs/server_address"
+    },
+    "server_startup_done": {
+      "$ref": "#/$defs/server_startup_done"
+    },
+    "rcon_started": {
+      "$ref": "#/$defs/rcon_started"
+    },
+    "server_stopping": {
+      "$ref": "#/$defs/server_stopping"
+    },
+    "commands": {
+      "$ref": "#/$defs/commands"
+    }
+  },
+
+  "allOf": [
+    {
+      "$comment": "If extends is present, this is a derived base profile (base/ only, not features/).",
+      "if": {
+        "required": ["extends"]
+      },
+      "then": {
+        "properties": {
+          "extends": { "type": "string" }
+        }
+      }
+    }
+  ],
+
+  "$defs": {
+    "regex_substitutions": {
+      "title": "Regex Substitutions",
+      "description": "Ordered list of regex → replacement substitutions.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["pattern"],
+        "properties": {
+          "pattern": {
+            "type": "string",
+            "description": "Python regex pattern."
+          },
+          "replacement": {
+            "type": "string",
+            "description": "Replacement string. Supports backslash group references (e.g. \\1). Defaults to ''.",
+            "default": ""
+          },
+          "stop_on_match": {
+            "type": "boolean",
+            "description": "If true, stop processing further substitutions after this one matches. Default: false."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+
+    "log_format": {
+      "title": "Log Format",
+      "description": "Defines how server log lines are parsed into structured fields. Used as the primary parser in full_profile mode, or as an exception-fallback in wrapper mode.",
+      "type": "object",
+      "anyOf": [
+        { "required": ["pattern"] },
+        { "required": ["patterns"] }
+      ],
+      "properties": {
+        "pattern": {
+          "type": "string",
+          "description": "A single regex with named capture groups. Required groups: hour, min, sec, logging, content."
+        },
+        "patterns": {
+          "type": "array",
+          "description": "Multiple regex patterns tried in order. First match wins. Each must have the named groups: hour, min, sec, logging, content.",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "pre_parse": {
+      "title": "Pre-parse Processing",
+      "description": "Text transformations applied to every stdout line BEFORE the base handler parses it.",
+      "type": "object",
+      "properties": {
+        "strip_ansi": {
+          "type": "boolean",
+          "description": "Strip ANSI escape sequences (e.g. colour codes) from the line."
+        },
+        "strip_control_chars": {
+          "type": "boolean",
+          "description": "Strip ASCII control characters (ord < 0x20) from the line."
+        },
+        "control_chars_except": {
+          "type": "array",
+          "description": "Characters to KEEP when strip_control_chars is true. Each element is a single character string.",
+          "items": { "type": "string", "minLength": 1, "maxLength": 1 }
+        },
+        "regex_substitutions": {
+          "$ref": "#/$defs/regex_substitutions",
+          "description": "Ordered list of regex → replacement substitutions applied to the raw text. Set stop_on_match: true to prevent further substitutions after a match."
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "player_message": {
+      "title": "Player Message Detection",
+      "description": "Regex patterns that identify a log line as a player chat message and extract the player name + message content.",
+      "type": "object",
+      "properties": {
+        "patterns": {
+          "type": "array",
+          "description": "Ordered list of regex patterns. Must contain named capture group 'name'. Optional named group 'message' replaces info.content when matched. First match wins.",
+          "items": { "type": "string" }
+        },
+        "name_validation": {
+          "type": "string",
+          "description": "Regex that extracted player names must fullmatch to be considered valid. Default: '[a-zA-Z0-9_]{3,16}'."
+        },
+        "quote_player_names": {
+          "type": "boolean",
+          "description": "Wrap extracted player names in double quotes. Required for Bedrock BDS where player names can contain spaces."
+        },
+        "ignore_content_prefixes": {
+          "type": "array",
+          "description": "If info.content starts with any of these prefixes, the content is cleared to empty string (preventing accidental command execution via chat).",
+          "items": { "type": "string" }
+        },
+        "extra_fields": {
+          "type": "object",
+          "description": "Mapping from regex capture group names to Info attribute names. When a player_message pattern matches, the named groups are extracted and attached as dynamic attributes on the Info object. Example: {\"subserver\": \"subserver\"} sets info.subserver = matched['subserver'].",
+          "additionalProperties": { "type": "string" }
+        },
+        "regex_substitutions": {
+          "$ref": "#/$defs/regex_substitutions",
+          "description": "Ordered list of regex → replacement substitutions applied to the player message content after detection. Set stop_on_match: true to prevent subsequent substitutions from undoing a match."
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "parse_server_stdout": {
+      "title": "Pseudo Players",
+      "description": "Virtual / pseudo player definitions — map specific log patterns to special player names (e.g. command blocks, functions, sub-servers).",
+      "type": "object",
+      "properties": {
+        "pseudo_players": {
+          "type": "array",
+          "description": "Each entry defines a pattern → player_name mapping.",
+          "items": {
+            "type": "object",
+            "required": ["pattern", "player_name"],
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "description": "Python regex. Optional named group 'message' replaces info.content on match."
+              },
+              "player_name": {
+                "type": "string",
+                "description": "Virtual player name assigned to info.player on match. Use double-quote wrapping for names with spaces (e.g. '\"!commandblock\"')."
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "join_leave": {
+      "title": "Join / Leave Detection",
+      "description": "Regex patterns for detecting player join and leave events. Patterns must contain the named capture group 'name'.",
+      "type": "object",
+      "properties": {
+        "patterns": {
+          "type": "array",
+          "description": "Ordered list of regex patterns. Must contain named group 'name'. In full_profile mode these are the ONLY patterns; in wrapper mode they supplement the base handler's detection.",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "server_version": {
+      "title": "Server Version Detection",
+      "description": "Pattern to extract the server version string from a log line.",
+      "type": "object",
+      "required": ["pattern"],
+      "properties": {
+        "pattern": {
+          "type": "string",
+          "description": "Regex with named group 'version'."
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "server_address": {
+      "title": "Server Address Detection",
+      "description": "Pattern to extract the server IP and port from a log line.",
+      "type": "object",
+      "required": ["pattern"],
+      "properties": {
+        "pattern": {
+          "type": "string",
+          "description": "Regex with named groups 'port' (required) and 'ip' (optional, defaults to '127.0.0.1')."
+        },
+        "detection_mode": {
+          "type": "string",
+          "enum": ["all", "first_only"],
+          "description": "'first_only' = only the first matching line is used (BDS outputs IPv4 twice). 'all' = every match re-fires. Default: 'all'."
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "server_startup_done": {
+      "title": "Startup Complete Detection",
+      "description": "Patterns that indicate the server has finished starting up.",
+      "type": "object",
+      "properties": {
+        "patterns": {
+          "type": "array",
+          "description": "List of regex patterns. A fullmatch signals that startup is complete.",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "rcon_started": {
+      "title": "RCON Started Detection",
+      "description": "Pattern for detecting when the RCON server is ready, or a flag to disable RCON detection entirely.",
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Set to false to always return False from test_rcon_started (e.g. Bedrock BDS has no RCON). When omitted or true, the pattern field is used."
+        },
+        "pattern": {
+          "type": "string",
+          "description": "Regex that fullmatches a line indicating RCON is ready."
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "server_stopping": {
+      "title": "Server Stopping Detection",
+      "description": "Patterns that indicate the server is beginning to stop.",
+      "type": "object",
+      "properties": {
+        "patterns": {
+          "type": "array",
+          "description": "List of regex patterns. A fullmatch signals that the server is stopping.",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "commands": {
+      "title": "Server Commands",
+      "description": "Templates for server control commands (stop, tell/send message, broadcast).",
+      "type": "object",
+      "properties": {
+        "stop": {
+          "type": "string",
+          "description": "Command sent to the server console to stop the server gracefully. Default: 'stop'."
+        },
+        "send_message": {
+          "type": "object",
+          "description": "Template for sending a message to a specific player.",
+          "properties": {
+            "template": {
+              "type": "string",
+              "description": "Template string. {target} is replaced with the player name, {message} with the formatted message. Example: 'tellraw {target} {message}'."
+            },
+            "wrap_with_execute": {
+              "type": "object",
+              "description": "Optional wrapper for bedrock_rawtext support on older BDS versions.",
+              "required": ["min_version", "template"],
+              "properties": {
+                "min_version": {
+                  "type": "string",
+                  "description": "Minimum server version that does NOT need wrapping. Below this, the outer template is used."
+                },
+                "template": {
+                  "type": "string",
+                  "description": "Wrapper template. Example: 'execute at @p run tellraw {target} {message}'."
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "broadcast": {
+          "type": "object",
+          "description": "Template for broadcasting a message to all players. {message} is replaced with the formatted message.",
+          "properties": {
+            "template": {
+              "type": "string",
+              "description": "Template string. {message} is replaced. Example: 'tellraw @a {message}'."
+            }
+          },
+          "additionalProperties": false
+        },
+        "message_format": {
+          "type": "string",
+          "enum": ["java_json", "bedrock_rawtext"],
+          "description": "Message serialization format. 'java_json' uses RTextBase.to_json_str() (default). 'bedrock_rawtext' uses {'rawtext': [...]} format for BDS."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

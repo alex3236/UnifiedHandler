@@ -1,0 +1,33 @@
+name: "lbs_subserver"
+version: "1.0.0"
+changelog: "v1.0.0: Initial release"
+description: "Velocity 子服消息识别：[/子服名] <玩家> 消息、前缀路由、子服名注入"
+extends: "velocity_handler"
+
+pre_parse:
+  # 将 Velocity 日志中的 [/subserver] 移到冒号后（从 logger 位置移到 content 中），
+  # 避免被 VelocityHandler log_format 的 optional logger 组丢弃
+  regex_substitutions:
+    - pattern: '^(\[\d{2}:\d{2}:\d{2} [A-Z]+\]) (\[/[^\]]+\]): '
+      replacement: '\1: \2 '
+
+player_message:
+  patterns:
+    - '\[(?P<subserver>[^\]]+)\] <(?P<name>[^>]+)> (?P<message>.*)'
+  # 将 player_message 匹配到的 capture group 注入到 Info 对象中
+  extra_fields:
+    subserver: subserver
+  # 玩家消息命令前缀路由：双向映射使 Velocity 后端子服中也能使用 MCDR 命令
+  regex_substitutions:
+    - pattern: '^!!VMCDR(\s|$)'
+      replacement: '!!MCDR\1'
+      stop_on_match: true
+    - pattern: '^!!MCDR(\s|$)'
+      replacement: '!!VMCDR\1'
+      stop_on_match: true
+
+commands:
+  send_message:
+    template: 'alertraw {target} {message}'
+  broadcast:
+    template: 'alertraw @a {message}'
