@@ -36,6 +36,10 @@ Handler = Base（服务端类型，选一个）⊕ Features（额外功能，随
 
 ## 快速开始
 
+> [!IMPORTANT]
+> **不要和其他 handler 插件一起使用。** MCDR 同时存在多个插件 handler 时，究竟采用哪一个是没有定义的。
+> 如果你已经在用其他 handler 插件，请先卸载它们，再把 UnifiedHandler 配置好。
+
 ### 📦 安装
 
 1. 把插件放进 MCDR 的 `plugins/` 目录
@@ -43,7 +47,7 @@ Handler = Base（服务端类型，选一个）⊕ Features（额外功能，随
 3. 按需编辑配置
 4. `!!uh reload` 重载
 
-## ⚙️ 配置
+### ⚙️ 配置
 
 编辑 `config/unified_handler/config.yml`
 

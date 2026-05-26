@@ -36,6 +36,10 @@ Early on, this project considered exposing hooks so other plugins could inject l
 
 ## Quick Start
 
+> [!IMPORTANT]
+> **Do not use alongside other handler plugins.** MCDR's behavior is undefined when multiple plugin handlers are present — there's no guarantee which one takes effect.
+> If you already have other handler plugins installed, remove them first, then configure UnifiedHandler.
+
 ### 📦 Installation
 
 1. Drop the plugin into MCDR's `plugins/` directory
@@ -43,7 +47,7 @@ Early on, this project considered exposing hooks so other plugins could inject l
 3. Edit the config as needed
 4. `!!uh reload` to apply
 
-## ⚙️ Configuration
+### ⚙️ Configuration
 
 Edit `config/unified_handler/config.yml`
 
