@@ -28,11 +28,11 @@ Everything is defined in **YAML profiles** — readable, editable, and upgrade-s
 
 Early on, this project considered exposing hooks so other plugins could inject logic during message processing. Ultimately we chose not to go that route:
 
-**More efficient.** Profiles are compiled once at load time into pre-processed regex structures. There's no runtime dispatching, no jumping between plugins, no dynamic callback lookup. Every log line matches directly against the compiled profile.
+- **More efficient.** Profiles are compiled once at load time into pre-processed regex structures. There's no runtime dispatching, no jumping between plugins, no dynamic callback lookup. Every log line matches directly against the compiled profile.
 
-**Easier to use.** Writing YAML has a much lower barrier than writing Python. No coding knowledge, no MCDR API familiarity needed — just write a few regex patterns that match your server's log format. The built-in profiles are living proof: the Cleanroom and Leaves adapters each took less than 20 lines of YAML.
+- **Easier to use.** Writing YAML has a much lower barrier than writing Python. No coding knowledge, no MCDR API familiarity needed — just write a few regex patterns that match your server's log format. The built-in profiles are living proof: the Cleanroom and Leaves adapters each took less than 20 lines of YAML.
 
-**One handler is enough.** MCDR only allows one plugin handler at a time. Base ⊕ Features already covers the vast majority of use cases. Instead of making multiple plugins coordinate at runtime, UnifiedHandler consolidates everything into a single, compile-time solution.
+- **One handler is enough.** MCDR only allows one plugin handler at a time. Base ⊕ Features already covers the vast majority of use cases. Instead of making multiple plugins coordinate at runtime, UnifiedHandler consolidates everything into a single, compile-time solution.
 
 ## Quick Start
 
