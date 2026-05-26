@@ -16,14 +16,17 @@ Profile 生命周期:
 import os
 import shutil
 import zipfile
-import yaml
 from typing import Optional, TYPE_CHECKING
+
+from ruamel.yaml import YAML
 
 from mcdreforged.api.all import PluginServerInterface
 from mcdreforged.api.rtext import RTextList, RText, RStyle
 from mcdreforged.api.command import Literal
 
 from .config import PluginConfig
+_yaml = YAML(typ='safe')
+
 from .handler import (
     UnifiedHandler,
     instantiate_handler,
@@ -94,7 +97,7 @@ def _read_bundled_yaml(server: PluginServerInterface, relative_path: str) -> Opt
     """Read a YAML file from the plugin bundle. Returns None on failure."""
     try:
         with server.open_bundled_file(relative_path) as f:
-            return yaml.safe_load(f.read().decode('utf-8'))
+            return _yaml.load(f.read().decode('utf-8'))
     except Exception:
         return None
 

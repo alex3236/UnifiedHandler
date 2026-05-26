@@ -87,17 +87,17 @@ UnifiedHandler ships with profiles for common server setups. Thanks to the origi
 
 | Name | File | For | Credits |
 |------|------|-----|---------|
-| `cleanroom` | `base/cleanroom.yml` | Cleanroom MC (extends forge_handler) | [Cmmmmmm](https://github.com/CmmmmmmLau/CleanroomHandler) |
-| `leaves` | `base/leaves.yml` | Leaves fork (extends bukkit_handler) | [Mooling0602](https://github.com/Mooling0602/LeavesHandler-MCDR) |
-| `lbs_subserver` | `base/lbs_subserver.yml` | Velocity subserver routing (extends velocity_handler) | [Ra1ny_Yuki](https://github.com/Lazy-Bing-Server/LBSVelocityHandler-MCDR) |
-| `bedrock_bds` | `base/bedrock_bds.yml` | Bedrock Dedicated Server (standalone full profile) | [Elec glacier](https://github.com/Elec-Glacier/liteloader_handler), jiangyan |
+| `cleanroom` | `base/cleanroom.yml` | Cleanroom MC | [`Cmmmmmm`](https://github.com/CmmmmmmLau/CleanroomHandler) |
+| `leaves` | `base/leaves.yml` | LeavesMC | [`Mooling0602`](https://github.com/Mooling0602/LeavesHandler-MCDR) |
+| `lbs_subserver` | `base/lbs_subserver.yml` | Velocity subserver routing | [`Ra1ny_Yuki`](https://github.com/Lazy-Bing-Server/LBSVelocityHandler-MCDR) |
+| `bedrock_bds` | `base/bedrock_bds.yml` | Bedrock Dedicated Server | [`Elec glacier`](https://github.com/Elec-Glacier/liteloader_handler), `jiangyan` |
 
 ### Features
 
 | Name | File | Does | Credits |
 |------|------|------|---------|
-| `commandblock` | `features/commandblock.yml` | `[@]` and `[Server]` output can trigger MCDR commands | [Dainsleif](https://github.com/Dainsleif233/MCDR-Commandblock-Handler) |
-| `chat_prefixes` | `features/chat_prefixes.yml` | Parse `<[Team]Name>` and rank prefix chat formats | [DCS](https://github.com/ayuan94/TitlePrefixHandler), [Mooling0602](https://github.com/Mooling0602/VanillaTeamHandler-MCDR) |
+| `commandblock` | `features/commandblock.yml` | `[@]` and `[Server]` output can trigger MCDR commands | [`Dainsleif`](https://github.com/Dainsleif233/MCDR-Commandblock-Handler) |
+| `chat_prefixes` | `features/chat_prefixes.yml` | Parse `<[Team]Name>` and rank prefix chat formats | [`DCS`](https://github.com/ayuan94/TitlePrefixHandler), [`Mooling0602`](https://github.com/Mooling0602/VanillaTeamHandler-MCDR) |
 
 ## Custom Profiles
 

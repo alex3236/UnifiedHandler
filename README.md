@@ -39,7 +39,7 @@ Handler = Base（服务端类型，选一个）⊕ Features（额外功能，随
 
 **情况一：MCDR 自带的 handler 能处理你的服务端**
 
-[Vanilla / Forge / Bukkit / Velocity 等由 MCDR 自带的 handler](https://docs.mcdreforged.com/zh-cn/latest/configuration.html#handler) 能覆盖大部分情况。你只需要一些扩展（比如处理 Team 前缀）：
+如果由 [MCDR 自带的 handler](https://docs.mcdreforged.com/zh-cn/latest/configuration.html#handler) 能覆盖大部分情况，而你只需要一些扩展（比如处理 Team 前缀）：
 
 1. 保留 MCDR 配置文件中原有的 `handler` 字段
 2. 把 `base_handler` 设为 `"auto"`
@@ -87,17 +87,17 @@ UnifiedHandler 内置了一些常见的处理情景。感谢这些开发者的�
 
 | 名称 | 文件 | 适用于 | 原始作者 |
 |------|------|--------|----------|
-| `cleanroom` | `base/cleanroom.yml` | Cleanroom MC（extends forge_handler） | [Cmmmmmm](https://github.com/CmmmmmmLau/CleanroomHandler) |
-| `leaves` | `base/leaves.yml` | Leaves（extends bukkit_handler） | [Mooling0602](https://github.com/Mooling0602/LeavesHandler-MCDR) |
-| `lbs_subserver` | `base/lbs_subserver.yml` | Velocity 子服消息识别（extends velocity_handler） | [Ra1ny_Yuki](https://github.com/Lazy-Bing-Server/LBSVelocityHandler-MCDR) |
-| `bedrock_bds` | `base/bedrock_bds.yml` | Bedrock Dedicated Server（独立完整 profile） | [Elec glacier](https://github.com/Elec-Glacier/liteloader_handler), jiangyan |
+| `cleanroom` | `base/cleanroom.yml` | Cleanroom MC | [`Cmmmmmm`](https://github.com/CmmmmmmLau/CleanroomHandler) |
+| `leaves` | `base/leaves.yml` | LeavesMC | [`Mooling0602`](https://github.com/Mooling0602/LeavesHandler-MCDR) |
+| `lbs_subserver` | `base/lbs_subserver.yml` | Velocity 子服消息识别 | [`Ra1ny_Yuki`](https://github.com/Lazy-Bing-Server/LBSVelocityHandler-MCDR) |
+| `bedrock_bds` | `base/bedrock_bds.yml` | Bedrock Dedicated Server | [`Elec glacier`](https://github.com/Elec-Glacier/liteloader_handler), `jiangyan` |
 
 ### Features
 
 | 名称 | 文件 | 作用 | 原始作者 |
 |------|------|------|----------|
-| `commandblock` | `features/commandblock.yml` | `[@]` 和 `[Server]` 消息也能触发 MCDR 命令 | [Dainsleif](https://github.com/Dainsleif233/MCDR-Commandblock-Handler) |
-| `chat_prefixes` | `features/chat_prefixes.yml` | 解析 `<[Team]Name>` 格式和称号前缀 | [DCS](https://github.com/ayuan94/TitlePrefixHandler), [Mooling0602](https://github.com/Mooling0602/VanillaTeamHandler-MCDR) |
+| `commandblock` | `features/commandblock.yml` | `[@]` 和 `[Server]` 消息也能触发 MCDR 命令 | [`Dainsleif`](https://github.com/Dainsleif233/MCDR-Commandblock-Handler) |
+| `chat_prefixes` | `features/chat_prefixes.yml` | 解析 `<[Team]Name>` 格式和称号前缀 | [`DCS`](https://github.com/ayuan94/TitlePrefixHandler), [`Mooling0602`](https://github.com/Mooling0602/VanillaTeamHandler-MCDR) |
 
 ## 自定义 Profile
 
