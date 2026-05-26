@@ -1,8 +1,8 @@
+**中文** | [`English`](README_en.md)
+
 # Unified Handler
 
 一个用于 MCDReforged 的服务端处理器插件——用 YAML 驱动的 profile 来适配各种 Minecraft 服务端，再也不用为了不同服务端装一堆 handler 插件啦。
-
-[English version](README_en.md)
 
 ## 为什么需要它？
 
@@ -26,20 +26,16 @@ Handler = Base（服务端类型，选一个）⊕ Features（额外功能，随
 
 ## 快速开始
 
-<details>
-<summary>📦 安装</summary>
+### 📦 安装
 
 1. 把插件放进 MCDR 的 `plugins/` 目录
 2. 启动或重载 MCDR，UnifiedHandler 将自动生成 `config/unified_handler/config.yml` 并释放内置 profiles
 3. 按需编辑配置
 4. `!!uh reload` 重载
 
-</details>
+## ⚙️ 配置
 
-<details>
-<summary>⚙️ 配置</summary>
-
-`config/unified_handler/config.yml`：
+编辑 `config/unified_handler/config.yml`
 
 **情况一：MCDR 自带的 handler 能处理你的服务端**
 
@@ -58,13 +54,13 @@ features:
 
 **情况二：MCDR 自带的 handler 无法处理你的服务端**
 
-比如 BDS、Leaves 等——用本插件内置的 profile：
+比如 BDS、Leaves 等，使用本插件内置的 profile：
 
 1. 把 `base_handler` 设为对应的 profile 名称
 2. 按需添加 `features`
 
 ```yaml
-base_handler: "bedrock_bds"    # 内置可选：bedrock_bds, cleanroom_fix, leaves_fix, lbs_subserver
+base_handler: "bedrock_bds"    # 详见“内置 Profile”一节
 
 features:
   - commandblock
@@ -83,27 +79,25 @@ command_prefix: "!!uh"
 admin_permission: 3
 ```
 
-</details>
-
 ## 内置 Profile
 
-### Base（服务端适配）
+UnifiedHandler 内置了一些常见的处理情景。感谢这些开发者的付出。
 
-| 名称              | 文件                       | 适用于                                       |
-| --------------- | ------------------------ | ----------------------------------------- |
-| `cleanroom_fix` | `base/cleanroom_fix.yml` | Cleanroom MC（extends forge_handler）       |
-| `leaves_fix`    | `base/leaves_fix.yml`    | Leaves（extends bukkit_handler）            |
-| `lbs_subserver` | `base/lbs_subserver.yml` | Velocity 子服消息识别（extends velocity_handler） |
-| `bedrock_bds`   | `base/bedrock_bds.yml`   | Bedrock Dedicated Server（独立完整 profile）    |
+### Base
 
-> 其余服务端（Vanilla / Forge / Bukkit / Velocity 等）使用 MCDR 内置 handler，设置 `base_handler: "auto"` 即可自动匹配。
+| 名称 | 文件 | 适用于 | 原始作者 |
+|------|------|--------|----------|
+| `cleanroom` | `base/cleanroom.yml` | Cleanroom MC（extends forge_handler） | [Cmmmmmm](https://github.com/CmmmmmmLau/CleanroomHandler) |
+| `leaves` | `base/leaves.yml` | Leaves（extends bukkit_handler） | [Mooling0602](https://github.com/Mooling0602/LeavesHandler-MCDR) |
+| `lbs_subserver` | `base/lbs_subserver.yml` | Velocity 子服消息识别（extends velocity_handler） | [Ra1ny_Yuki](https://github.com/Lazy-Bing-Server/LBSVelocityHandler-MCDR) |
+| `bedrock_bds` | `base/bedrock_bds.yml` | Bedrock Dedicated Server（独立完整 profile） | [Elec glacier](https://github.com/Elec-Glacier/liteloader_handler), jiangyan |
 
-### Features（功能增强）
+### Features
 
-| 名称              | 文件                           | 作用                                |
-| --------------- | ---------------------------- | --------------------------------- |
-| `commandblock`  | `features/commandblock.yml`  | `[@]` 和 `[Server]` 消息也能触发 MCDR 命令 |
-| `chat_prefixes` | `features/chat_prefixes.yml` | 解析 `<[Team]Name>` 格式和称号前缀         |
+| 名称 | 文件 | 作用 | 原始作者 |
+|------|------|------|----------|
+| `commandblock` | `features/commandblock.yml` | `[@]` 和 `[Server]` 消息也能触发 MCDR 命令 | [Dainsleif](https://github.com/Dainsleif233/MCDR-Commandblock-Handler) |
+| `chat_prefixes` | `features/chat_prefixes.yml` | 解析 `<[Team]Name>` 格式和称号前缀 | [DCS](https://github.com/ayuan94/TitlePrefixHandler), [Mooling0602](https://github.com/Mooling0602/VanillaTeamHandler-MCDR) |
 
 ## 自定义 Profile
 

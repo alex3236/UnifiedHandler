@@ -15,10 +15,12 @@ Profile 生命周期:
 
 import os
 import shutil
+import zipfile
+import yaml
 from typing import Optional, TYPE_CHECKING
 
 from mcdreforged.api.all import PluginServerInterface
-from mcdreforged.api.rtext import RTextList, RText
+from mcdreforged.api.rtext import RTextList, RText, RStyle
 from mcdreforged.api.command import Literal
 
 from .config import PluginConfig
@@ -46,9 +48,55 @@ PLUGIN_ID = 'unified_handler'
 # Profile 同步
 # =============================================================================
 
-def _get_builtin_profiles_dir() -> str:
-    """内置 profiles 资源目录（位于插件根目录的 resources/ 下）"""
-    return os.path.join(os.path.dirname(os.path.dirname(__file__)), 'resources', 'builtin_profiles')
+def _list_bundled_profiles() -> list[tuple[str, str, str]]:
+    """
+    List builtin profile files shipped with the plugin.
+
+    Returns a list of (relative_path, profile_type, filename) tuples.
+    Tries filesystem first (source mode), falls back to zip listing (.mcdr mode).
+    """
+    builtin_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'resources', 'builtin_profiles')
+
+    # Source mode — filesystem listing
+    if os.path.isdir(builtin_dir):
+        result = []
+        for profile_type in ['features', 'base']:
+            type_dir = os.path.join(builtin_dir, profile_type)
+            if os.path.isdir(type_dir):
+                for filename in sorted(os.listdir(type_dir)):
+                    if filename.endswith('.yml') and not filename.startswith('.'):
+                        rel = f'resources/builtin_profiles/{profile_type}/{filename}'
+                        result.append((rel, profile_type, filename))
+        return result
+
+    # .mcdr mode — zip listing
+    mcdr_path = __file__
+    while mcdr_path and not mcdr_path.endswith('.mcdr'):
+        mcdr_path = os.path.dirname(mcdr_path)
+
+    if mcdr_path and os.path.isfile(mcdr_path):
+        result = []
+        with zipfile.ZipFile(mcdr_path, 'r') as zf:
+            for name in sorted(zf.namelist()):
+                if not name.startswith('resources/builtin_profiles/') or not name.endswith('.yml'):
+                    continue
+                parts = name.split('/')
+                if len(parts) >= 4:
+                    profile_type = parts[2]  # 'base' or 'features'
+                    filename = parts[3]
+                    result.append((name, profile_type, filename))
+        return result
+
+    return []
+
+
+def _read_bundled_yaml(server: PluginServerInterface, relative_path: str) -> Optional[dict]:
+    """Read a YAML file from the plugin bundle. Returns None on failure."""
+    try:
+        with server.open_bundled_file(relative_path) as f:
+            return yaml.safe_load(f.read().decode('utf-8'))
+    except Exception:
+        return None
 
 
 def _get_user_profiles_dir(server: PluginServerInterface) -> str:
@@ -63,54 +111,50 @@ def _sync_builtin_profiles(server: PluginServerInterface) -> None:
     - 缺失的 → 从内置释放
     - 已有的但内置版本更新 → 记录警告
     """
-    builtin_dir = _get_builtin_profiles_dir()
-    user_dir = _get_user_profiles_dir(server)
-
-    if not os.path.isdir(builtin_dir):
-        server.logger.warning(server.rtr(f'{PLUGIN_ID}.sync.builtin_dir_not_found', builtin_dir))
+    bundled = _list_bundled_profiles()
+    if not bundled:
+        server.logger.warning(server.rtr(f'{PLUGIN_ID}.sync.builtin_dir_not_found', 'resources/builtin_profiles'))
         return
 
-    for profile_type in ['features', 'base']:
-        builtin_type_dir = os.path.join(builtin_dir, profile_type)
-        if not os.path.isdir(builtin_type_dir):
-            continue
+    user_dir = _get_user_profiles_dir(server)
+    written_types: set[str] = set()
 
+    for rel_path, profile_type, filename in bundled:
         user_type_dir = os.path.join(user_dir, profile_type)
-        os.makedirs(user_type_dir, exist_ok=True)
+        if profile_type not in written_types:
+            os.makedirs(user_type_dir, exist_ok=True)
+            written_types.add(profile_type)
 
-        for filename in sorted(os.listdir(builtin_type_dir)):
-            if not filename.endswith('.yml') or filename.startswith('.'):
-                continue
+        user_path = os.path.join(user_type_dir, filename)
 
-            builtin_path = os.path.join(builtin_type_dir, filename)
-            user_path = os.path.join(user_type_dir, filename)
-
-            if not os.path.exists(user_path):
-                # 缺失 → 释放
-                shutil.copy2(builtin_path, user_path)
-                server.logger.info(
-                    server.rtr(f'{PLUGIN_ID}.sync.installed_profile', profile_type, filename)
-                )
-            else:
-                # 检查版本
-                builtin_data = load_yaml_profile(builtin_path)
-                user_data = load_yaml_profile(user_path)
-                if builtin_data and user_data:
-                    bv = builtin_data.get('version', '0')
-                    uv = user_data.get('version', '0')
-                    if is_newer_version(bv, uv):
-                        name = builtin_data.get('name', filename)
-                        changelog = builtin_data.get('changelog', '')
+        if not os.path.exists(user_path):
+            # 缺失 → 释放
+            with server.open_bundled_file(rel_path) as src:
+                with open(user_path, 'wb') as dst:
+                    shutil.copyfileobj(src, dst)
+            server.logger.info(
+                server.rtr(f'{PLUGIN_ID}.sync.installed_profile', profile_type, filename)
+            )
+        else:
+            # 检查版本
+            builtin_data = _read_bundled_yaml(server, rel_path)
+            user_data = load_yaml_profile(user_path)
+            if builtin_data and user_data:
+                bv = builtin_data.get('version', '0')
+                uv = user_data.get('version', '0')
+                if is_newer_version(bv, uv):
+                    name = builtin_data.get('name', filename)
+                    changelog = builtin_data.get('changelog', '')
+                    server.logger.warning(
+                        server.rtr(f'{PLUGIN_ID}.sync.update_available', name, uv, bv)
+                    )
+                    if changelog:
                         server.logger.warning(
-                            server.rtr(f'{PLUGIN_ID}.sync.update_available', name, uv, bv)
+                            server.rtr(f'{PLUGIN_ID}.sync.changelog_prefix', changelog)
                         )
-                        if changelog:
-                            server.logger.warning(
-                                server.rtr(f'{PLUGIN_ID}.sync.changelog_prefix', changelog)
-                            )
-                        server.logger.warning(
-                            server.rtr(f'{PLUGIN_ID}.sync.update_instruction', user_path)
-                        )
+                    server.logger.warning(
+                        server.rtr(f'{PLUGIN_ID}.sync.update_instruction', user_path)
+                    )
 
 
 # =============================================================================
@@ -249,7 +293,7 @@ def _register_commands(server: PluginServerInterface):
         label_base = server.rtr(f'{PLUGIN_ID}.status.base')
         label_features = server.rtr(f'{PLUGIN_ID}.status.features')
         src.reply(RTextList(
-            RText(server.rtr(f'{PLUGIN_ID}.status.title') + '\n', bold=True),
+            RText(server.rtr(f'{PLUGIN_ID}.status.title') + '\n', styles=RStyle.bold),
             server.rtr(f'{PLUGIN_ID}.status.line', label_base, base),
             server.rtr(f'{PLUGIN_ID}.status.line', label_features, features),
         ))
@@ -265,7 +309,7 @@ def _register_commands(server: PluginServerInterface):
         Literal(prefix).runs(cmd_status).then(
             Literal('reload').requires(
                 lambda src: src.has_permission(cfg.admin_permission),
-                failure_message_default=server.rtr(f'{PLUGIN_ID}.permission_denied'),
+                failure_message_getter=lambda: server.rtr(f'{PLUGIN_ID}.permission_denied'),
             ).runs(cmd_reload)
         ).then(
             Literal('status').runs(cmd_status)

@@ -1,7 +1,7 @@
-"""Tests for cleanroom_fix base profile.
+"""Tests for cleanroom base profile.
 
 Original: CleanRoomServerHandler (26 lines, extends ForgeHandler, 1 override).
-ForgeHandler fails to parse empty [] lines; cleanroom_fix handles them.
+ForgeHandler fails to parse empty [] lines; cleanroom handles them.
 """
 import unittest
 
@@ -14,7 +14,7 @@ from unified_handler.handler import UnifiedHandler
 
 class TestCleanroomProfile(unittest.TestCase):
     def setUp(self):
-        profile = load_profile('cleanroom_fix', 'base')
+        profile = load_profile('cleanroom', 'base')
         compiled = compile_full_profile(profile)
         self.handler = UnifiedHandler(ForgeHandler(), compiled, mode='wrapper')
 

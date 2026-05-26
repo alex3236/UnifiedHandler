@@ -1,4 +1,4 @@
-name: "cleanroom_fix"
+name: "cleanroom"
 version: "1.0.0"
 changelog: "v1.0.0: Initial release"
 description: "适配 Cleanroom MC（Forge 的 Java 21 分支）：logger name 为空时输出空方括号 []"

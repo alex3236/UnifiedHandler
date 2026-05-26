@@ -50,7 +50,7 @@ class TestFeatureStacking(unittest.TestCase):
         self.assertEqual('hello', info.content)
 
     def test_cleanroom_with_commandblock(self):
-        cleanroom = load_profile('cleanroom_fix', 'base')
+        cleanroom = load_profile('cleanroom', 'base')
         cb = load_profile('commandblock')
         compiled = compile_full_profile(cleanroom)
         compiled.merge_feature(cb)
@@ -65,7 +65,7 @@ class TestFeatureStacking(unittest.TestCase):
         self.assertEqual('help', info.content)
 
     def test_leaves_with_chat_prefixes(self):
-        leaves = load_profile('leaves_fix', 'base')
+        leaves = load_profile('leaves', 'base')
         cp = load_profile('chat_prefixes')
         compiled = compile_full_profile(leaves)
         compiled.merge_feature(cp)

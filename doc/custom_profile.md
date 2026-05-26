@@ -1,8 +1,8 @@
+**中文** | [`English`](custom_profile_en.md)
+
 # 自定义 Profile 指南
 
 如果你使用的服务端不在内置支持列表中，或是想调整某个解析行为——来对地方了，写个 profile 就好。
-
-[English version](custom_profile_en.md)
 
 ## 概念速览
 

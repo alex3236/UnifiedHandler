@@ -1,8 +1,8 @@
+[`中文`](README.md) | **English**
+
 # Unified Handler
 
 A profile-driven server handler plugin for MCDReforged. One plugin, all server types. No more juggling a dozen handler plugins.
-
-[中文版](README.md)
 
 ## What problem does it solve?
 
@@ -26,20 +26,16 @@ Everything is defined in **YAML profiles** — readable, editable, and upgrade-s
 
 ## Quick Start
 
-<details>
-<summary>📦 Installation</summary>
+### 📦 Installation
 
 1. Drop the plugin into MCDR's `plugins/` directory
-2. Start MCDR — it auto-generates `config/unified_handler/config.yml` and deploys built-in profiles
-3. (Optional) Tweak the config to your liking
+2. Start or reload MCDR — UnifiedHandler auto-generates `config/unified_handler/config.yml` and deploys built-in profiles
+3. Edit the config as needed
 4. `!!uh reload` to apply
 
-</details>
+## ⚙️ Configuration
 
-<details>
-<summary>⚙️ Configuration</summary>
-
-`config/unified_handler/config.yml`:
+Edit `config/unified_handler/config.yml`
 
 **Case 1: MCDR's built-in handler covers your server**
 
@@ -64,7 +60,7 @@ For servers like BDS, Leaves, etc. — use the plugin's built-in profiles:
 2. Add features as needed
 
 ```yaml
-base_handler: "bedrock_bds"    # built-in options: bedrock_bds, cleanroom_fix, leaves_fix, lbs_subserver
+base_handler: "bedrock_bds"    # see "Built-in Profiles" below
 
 features:
   - commandblock
@@ -83,27 +79,25 @@ command_prefix: "!!uh"
 admin_permission: 3
 ```
 
-</details>
-
 ## Built-in Profiles
 
-### Base (server adaptation)
+UnifiedHandler ships with profiles for common server setups. Thanks to the original plugin authors.
 
-| Name | File | For |
-|------|------|-----|
-| `cleanroom_fix` | `base/cleanroom_fix.yml` | Cleanroom MC (extends forge_handler) |
-| `leaves_fix` | `base/leaves_fix.yml` | Leaves fork (extends bukkit_handler) |
-| `lbs_subserver` | `base/lbs_subserver.yml` | Velocity subserver routing (extends velocity_handler) |
-| `bedrock_bds` | `base/bedrock_bds.yml` | Bedrock Dedicated Server (standalone full profile) |
+### Base
 
-> Other server types (Vanilla, Forge, Bukkit, Velocity, etc.) use MCDR's built-in handlers. Set `base_handler: "auto"` and you're done.
+| Name | File | For | Credits |
+|------|------|-----|---------|
+| `cleanroom` | `base/cleanroom.yml` | Cleanroom MC (extends forge_handler) | [Cmmmmmm](https://github.com/CmmmmmmLau/CleanroomHandler) |
+| `leaves` | `base/leaves.yml` | Leaves fork (extends bukkit_handler) | [Mooling0602](https://github.com/Mooling0602/LeavesHandler-MCDR) |
+| `lbs_subserver` | `base/lbs_subserver.yml` | Velocity subserver routing (extends velocity_handler) | [Ra1ny_Yuki](https://github.com/Lazy-Bing-Server/LBSVelocityHandler-MCDR) |
+| `bedrock_bds` | `base/bedrock_bds.yml` | Bedrock Dedicated Server (standalone full profile) | [Elec glacier](https://github.com/Elec-Glacier/liteloader_handler), jiangyan |
 
-### Features (stackable add-ons)
+### Features
 
-| Name | File | Does |
-|------|------|------|
-| `commandblock` | `features/commandblock.yml` | `[@]` and `[Server]` output can trigger MCDR commands |
-| `chat_prefixes` | `features/chat_prefixes.yml` | Parse `<[Team]Name>` and rank prefix chat formats |
+| Name | File | Does | Credits |
+|------|------|------|---------|
+| `commandblock` | `features/commandblock.yml` | `[@]` and `[Server]` output can trigger MCDR commands | [Dainsleif](https://github.com/Dainsleif233/MCDR-Commandblock-Handler) |
+| `chat_prefixes` | `features/chat_prefixes.yml` | Parse `<[Team]Name>` and rank prefix chat formats | [DCS](https://github.com/ayuan94/TitlePrefixHandler), [Mooling0602](https://github.com/Mooling0602/VanillaTeamHandler-MCDR) |
 
 ## Custom Profiles
 

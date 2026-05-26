@@ -1,4 +1,4 @@
-"""Tests for leaves_fix base profile.
+"""Tests for leaves base profile.
 
 Original: LeavesHandler (50 lines, extends BukkitHandler, 3 overrides).
 """
@@ -28,7 +28,7 @@ LEAVES_LIFECYCLE = r'''
 
 class TestLeavesProfile(unittest.TestCase):
     def setUp(self):
-        profile = load_profile('leaves_fix', 'base')
+        profile = load_profile('leaves', 'base')
         compiled = compile_full_profile(profile)
         self.handler = UnifiedHandler(BukkitHandler(), compiled, mode='wrapper')
 

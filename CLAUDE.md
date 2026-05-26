@@ -33,3 +33,7 @@ This file provides guidance to agents when working on the project.
 - [ ] New profile fields are documented in `doc/custom_profile*.md` (both languages) if user-facing
 - [ ] README is updated if the change affects the getting-started flow
 - [ ] Both Chinese and English docs are updated
+
+## Commit messages
+
+Use Conventional Commits. Use English (US). No emojis.

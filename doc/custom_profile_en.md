@@ -1,8 +1,8 @@
+[`中文`](custom_profile.md) | **English**
+
 # Custom Profile Guide
 
 If your server isn't in the built-in list, or you want to tweak a parsing behavior — you're in the right place. Just write a profile.
-
-[中文版](custom_profile.md)
 
 ## The big picture
 
