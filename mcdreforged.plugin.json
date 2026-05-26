@@ -1,6 +1,6 @@
 {
     "id": "unified_handler",
-    "version": "1.0.0",
+    "version": "0.1.0",
     "name": "Unified Handler",
     "description": {
         "en_us": "✨ YAML-driven universal server handler, simple, easy to use, and extensible",
