@@ -20,9 +20,19 @@ Handler = Base（服务端类型，选一个）⊕ Features（额外功能，随
 ```
 
 - **Base** 决定"这是什么服务端"。内置支持 Vanilla / Forge / Bukkit / Velocity / Bedrock BDS，还包括 Cleanroom、Leaves 等特殊分支的适配。
-- **Features** 提供可叠加的增强。命令方块识别、称号前缀解析、子服消息路由……像搭积木一样随意组合。
+- **Features** 提供可叠加的增强——**多个 Feature 可以同时启用、自由组合**。命令方块识别、称号前缀解析、子服消息路由……像搭积木一样需要哪个就加哪个。
 
 所有行为都由 **YAML profile** 定义——清晰可读、易于修改、升级无忧。
+
+### 为什么不采用 Hook / Mixin 模式？
+
+起初此项目考虑过开放钩子，让其他插件在消息处理时插入逻辑。但最终没有走这条路：
+
+**效率更高。**Profile 在加载时一次性编译为预处理的 regex 结构，运行时无需在插件间来回跳转、动态查找回调。每条日志行直接匹配，没有额外的分发开销。
+
+**更容易上手。**写 YAML 比写 Python 门槛低得多。不需要懂编程、不需要了解 MCDR API——只要照着日志写几行正则就能适配自己的服务端。内置 profile 就是最好的例子：Cleanroom 和 Leaves 的适配都只用了十几行 YAML。
+
+**一个 handler 就够了。**MCDR 本身只允许一个插件 handler 生效。Base ⊕ Features 的组合已经能覆盖绝大多数场景。与其让多个插件在运行时互相协调，不如把功能收敛到一处，在早期阶段解决问题。
 
 ## 快速开始
 
@@ -50,6 +60,7 @@ base_handler: "auto"
 
 features:
   - chat_prefixes     # 支持 Team 前缀和称号前缀的玩家消息
+  - commandblock      # 可以多加几个，随意组合
 ```
 
 **情况二：MCDR 自带的 handler 无法处理你的服务端**

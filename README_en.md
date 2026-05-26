@@ -20,9 +20,19 @@ Handler = Base (server type, pick one) ⊕ Features (extras, stack as many as yo
 ```
 
 - **Base** tells the plugin what kind of server you're running. Built-in support for Vanilla, Forge, Bukkit, Velocity, Bedrock BDS, plus community forks like Cleanroom and Leaves.
-- **Features** are stackable enhancements. Command block recognition, chat prefix parsing, subserver message routing — mix and match like building blocks.
+- **Features** are stackable enhancements — **you can enable multiple features at once, in any combination**. Command block recognition, chat prefix parsing, subserver message routing — pick and choose like building blocks.
 
 Everything is defined in **YAML profiles** — readable, editable, and upgrade-safe.
+
+### Why not hooks / mixins?
+
+Early on, this project considered exposing hooks so other plugins could inject logic during message processing. Ultimately we chose not to go that route:
+
+**More efficient.** Profiles are compiled once at load time into pre-processed regex structures. There's no runtime dispatching, no jumping between plugins, no dynamic callback lookup. Every log line matches directly against the compiled profile.
+
+**Easier to use.** Writing YAML has a much lower barrier than writing Python. No coding knowledge, no MCDR API familiarity needed — just write a few regex patterns that match your server's log format. The built-in profiles are living proof: the Cleanroom and Leaves adapters each took less than 20 lines of YAML.
+
+**One handler is enough.** MCDR only allows one plugin handler at a time. Base ⊕ Features already covers the vast majority of use cases. Instead of making multiple plugins coordinate at runtime, UnifiedHandler consolidates everything into a single, compile-time solution.
 
 ## Quick Start
 
@@ -50,6 +60,8 @@ base_handler: "auto"
 
 features:
   - chat_prefixes     # parse team/rank prefixes in player chat
+  - commandblock      # stack as many as you like
+```
 ```
 
 **Case 2: MCDR's built-in handler can't handle your server**
