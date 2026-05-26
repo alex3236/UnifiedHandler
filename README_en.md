@@ -66,7 +66,6 @@ features:
   - chat_prefixes     # parse team/rank prefixes in player chat
   - commandblock      # stack as many as you like
 ```
-```
 
 **Case 2: MCDR's built-in handler can't handle your server**
 
