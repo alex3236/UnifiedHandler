@@ -54,6 +54,9 @@ Alternatively, drop the `.mcdr` file into the `plugins/` directory and reload MC
 
 ### ⚙️ Configuration
 
+> [!NOTE]  
+> After configuration, run through the [Handler Verification Guide](doc/handler_troubleshooting_en.md) to confirm everything is working.
+
 Edit `config/unified_handler/config.yml`
 
 <details open>
@@ -101,12 +104,10 @@ base_handler: "my_custom_server"
 Other config fields:
 
 ```yaml
-command_prefix: "!!uh"
-admin_permission: 3
-debug: false         # set to true to enable debug output
+command_prefix: "!!uh" # command prefix
+admin_permission: 3    # permission level for UnifiedHandler commands
+debug: false           # set to true to enable debug output
 ```
-
-**▶ Verify**: After configuration, run through the [Handler Verification Guide](doc/handler_troubleshooting_en.md) to confirm everything is working.
 
 ## Built-in Profiles
 
@@ -134,12 +135,15 @@ Need to adapt a custom server? Just write a few lines of YAML. We provide a full
 
 ## Commands
 
+*All `!!uh` commands require admin permission.*
+
 | Command | Does |
 |---------|------|
 | `!!uh` | Show current Base and active Features |
 | `!!uh status` | Same as above |
 | `!!uh reload` | Reload config and profiles |
 | `!!uh debug [on\|off]` | Toggle debug output |
+| `!!uh update` | Update and overwrite outdated builtin profiles |
 
 ## Compatibility
 

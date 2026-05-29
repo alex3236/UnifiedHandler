@@ -1,6 +1,6 @@
 **中文** | [`English`](README_en.md)
 
-# Unified Handler
+# ✨ Unified Handler
 
 一个用于 MCDReforged 的服务端处理器插件——用 YAML 驱动的 profile 来适配各种 Minecraft 服务端，再也不用为了不同服务端装一堆 handler 插件啦。
 
@@ -54,6 +54,9 @@ Handler = Base（服务端类型，选一个）⊕ Features（额外功能，随
 
 ### ⚙️ 配置
 
+> [!NOTE]  
+> 配置完成后，建议按照 [Handler 工作状态验证指南](doc/handler_troubleshooting.md) 跑一遍检查，确认所有项目都正常。
+
 编辑 `config/unified_handler/config.yml`
 
 <details open>
@@ -101,12 +104,10 @@ base_handler: "my_custom_server"
 其他配置项：
 
 ```yaml
-command_prefix: "!!uh"
-admin_permission: 3
-debug: false         # 设为 true 开启调试输出
+command_prefix: "!!uh" # 命令前缀
+admin_permission: 3    # UnifiedHandler 的命令权限
+debug: false           # 设为 true 开启调试输出
 ```
-
-**▶ 验证配置**：配置完成后，建议按照 [Handler 工作状态验证指南](doc/handler_troubleshooting.md) 跑一遍检查，确认所有项目都正常。
 
 ## 内置 Profile
 
@@ -134,12 +135,15 @@ UnifiedHandler 内置了一些常见的处理情景。感谢这些开发者的�
 
 ## 命令
 
+*所有 `!!uh` 命令均需管理员权限。*
+
 | 命令            | 作用                         |
 | ------------- | -------------------------- |
 | `!!uh`        | 查看当前使用的 Base 和启用的 Features |
 | `!!uh status` | 同上                         |
 | `!!uh reload` | 重载配置和 profiles             |
 | `!!uh debug [on\|off]`  | 切换调试输出              |
+| `!!uh update` | 更新并覆盖过期的内置 profile |
 
 ## 兼容性
 

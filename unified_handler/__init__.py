@@ -409,11 +409,11 @@ def _register_commands(server: PluginServerInterface):
         src.reply(RTextList(*[RText(line + '\n') for line in lines]))
 
     server.register_command(
-        Literal(prefix).runs(cmd_status).then(
-            Literal('reload').requires(
-                lambda src: src.has_permission(_config.admin_permission),
-                failure_message_getter=lambda: server.rtr(f'{PLUGIN_ID}.permission_denied'),
-            ).runs(cmd_reload)
+        Literal(prefix).requires(
+            lambda src: src.has_permission(_config.admin_permission),
+            failure_message_getter=lambda: server.rtr(f'{PLUGIN_ID}.permission_denied'),
+        ).runs(cmd_status).then(
+            Literal('reload').runs(cmd_reload)
         ).then(
             Literal('status').runs(cmd_status)
         ).then(
@@ -423,10 +423,7 @@ def _register_commands(server: PluginServerInterface):
                 Literal('off').runs(cmd_debug_off)
             )
         ).then(
-            Literal('update').requires(
-                lambda src: src.has_permission(_config.admin_permission),
-                failure_message_getter=lambda: server.rtr(f'{PLUGIN_ID}.permission_denied'),
-            ).runs(cmd_update)
+            Literal('update').runs(cmd_update)
         )
     )
     server.register_help_message(prefix, server.rtr(f'{PLUGIN_ID}.help.unified_handler'))
