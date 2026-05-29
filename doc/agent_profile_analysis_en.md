@@ -47,4 +47,6 @@ Repos: MCDR https://github.com/MCDReforged/MCDReforged | UnifiedHandler https://
 - If you need more information before analyzing: ask the user to provide it first.
 ```
 
-The agent will analyze the logs and config, give recommendations.
+The agent will analyze the logs and config, give recommendations. For example:
+
+https://github.com/user-attachments/assets/e977baa4-3e23-408d-9183-2bb9256ae66e

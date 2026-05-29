@@ -49,4 +49,7 @@ Repos: MCDR https://github.com/MCDReforged/MCDReforged | UnifiedHandler https://
 - If you need more information before analyzing: ask the user to provide it first.
 ```
 
-agent 会分析日志和配置，给出建议。
+agent 会分析日志和配置，给出建议。例如：
+
+https://github.com/user-attachments/assets/e977baa4-3e23-408d-9183-2bb9256ae66e
+
