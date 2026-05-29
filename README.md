@@ -42,10 +42,15 @@ Handler = Base（服务端类型，选一个）⊕ Features（额外功能，随
 
 ### 📦 安装
 
-1. 把插件放进 MCDR 的 `plugins/` 目录
-2. 启动或重载 MCDR，UnifiedHandler 将自动生成 `config/unified_handler/config.yml` 并释放内置 profiles
-3. 按需编辑配置
-4. `!!uh reload` 重载
+在 MCDR 控制台执行：
+
+```
+!!MCDR plugin install unified_handler
+```
+
+然后 `!!MCDR reload` 重载 MCDR，插件会自动生成 `config/unified_handler/config.yml` 并释放内置 profiles。
+
+也可以手动安装：把 `.mcdr` 文件放进 `plugins/` 目录，然后重载 MCDR。
 
 ### ⚙️ 配置
 

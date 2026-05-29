@@ -42,10 +42,15 @@ Early on, this project considered exposing hooks so other plugins could inject l
 
 ### 📦 Installation
 
-1. Drop the plugin into MCDR's `plugins/` directory
-2. Start or reload MCDR — UnifiedHandler auto-generates `config/unified_handler/config.yml` and deploys built-in profiles
-3. Edit the config as needed
-4. `!!uh reload` to apply
+Run in the MCDR console:
+
+```
+!!MCDR plugin install unified_handler
+```
+
+Then `!!MCDR reload` — the plugin auto-generates `config/unified_handler/config.yml` and deploys built-in profiles.
+
+Alternatively, drop the `.mcdr` file into the `plugins/` directory and reload MCDR.
 
 ### ⚙️ Configuration
 
