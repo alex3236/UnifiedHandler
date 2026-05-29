@@ -15,6 +15,7 @@ Profile 生命周期:
 
 import os
 import shutil
+import time
 import zipfile
 from typing import Optional, TYPE_CHECKING
 
@@ -50,6 +51,7 @@ PLUGIN_ID = 'unified_handler'
 
 _handler: Optional['UnifiedHandler'] = None
 _config: Optional[PluginConfig] = None
+_update_pending_at: Optional[float] = None
 
 # =============================================================================
 # Profile 同步
@@ -125,6 +127,7 @@ def _sync_builtin_profiles(server: PluginServerInterface) -> None:
 
     user_dir = _get_user_profiles_dir(server)
     written_types: set[str] = set()
+    outdated_count = 0
 
     for rel_path, profile_type, filename in bundled:
         user_type_dir = os.path.join(user_dir, profile_type)
@@ -135,7 +138,6 @@ def _sync_builtin_profiles(server: PluginServerInterface) -> None:
         user_path = os.path.join(user_type_dir, filename)
 
         if not os.path.exists(user_path):
-            # 缺失 → 释放
             with server.open_bundled_file(rel_path) as src:
                 with open(user_path, 'wb') as dst:
                     shutil.copyfileobj(src, dst)
@@ -143,7 +145,6 @@ def _sync_builtin_profiles(server: PluginServerInterface) -> None:
                 server.rtr(f'{PLUGIN_ID}.sync.installed_profile', profile_type, filename)
             )
         else:
-            # 检查版本
             builtin_data = _read_bundled_yaml(server, rel_path)
             user_data = load_yaml_profile(user_path)
             if builtin_data and user_data:
@@ -152,6 +153,7 @@ def _sync_builtin_profiles(server: PluginServerInterface) -> None:
                 if is_newer_version(bv, uv):
                     name = builtin_data.get('name', filename)
                     changelog = builtin_data.get('changelog', '')
+                    outdated_count += 1
                     server.logger.warning(
                         server.rtr(f'{PLUGIN_ID}.sync.update_available', name, uv, bv)
                     )
@@ -159,9 +161,11 @@ def _sync_builtin_profiles(server: PluginServerInterface) -> None:
                         server.logger.warning(
                             server.rtr(f'{PLUGIN_ID}.sync.changelog_prefix', changelog)
                         )
-                    server.logger.warning(
-                        server.rtr(f'{PLUGIN_ID}.sync.update_instruction', user_path)
-                    )
+
+    if outdated_count and _config is not None:
+        server.logger.warning(
+            server.rtr(f'{PLUGIN_ID}.sync.update_reminder', outdated_count, _config.command_prefix)
+        )
 
 
 def _deploy_schema(server: PluginServerInterface) -> None:
@@ -173,6 +177,42 @@ def _deploy_schema(server: PluginServerInterface) -> None:
                 shutil.copyfileobj(src, dst)
     except Exception:
         server.logger.warning(server.rtr(f'{PLUGIN_ID}.sync.schema_failed', schema_path))
+
+
+def _find_outdated_profiles(server: PluginServerInterface) -> list:
+    """找出所有内置版本比用户版本新的 profile。返回 [(rel_path, profile_type, filename, name, uv, bv, changelog), ...]"""
+    bundled = _list_bundled_profiles()
+    if not bundled:
+        return []
+    user_dir = _get_user_profiles_dir(server)
+    outdated = []
+    for rel_path, profile_type, filename in bundled:
+        user_path = os.path.join(user_dir, profile_type, filename)
+        if not os.path.exists(user_path):
+            continue
+        builtin_data = _read_bundled_yaml(server, rel_path)
+        user_data = load_yaml_profile(user_path)
+        if builtin_data and user_data:
+            bv = builtin_data.get('version', '0')
+            uv = user_data.get('version', '0')
+            if is_newer_version(bv, uv):
+                name = builtin_data.get('name', filename)
+                changelog = builtin_data.get('changelog', '')
+                outdated.append((rel_path, profile_type, filename, name, uv, bv, changelog))
+    return outdated
+
+
+def _overwrite_outdated_profiles(server: PluginServerInterface, outdated: list) -> None:
+    """用内置版本覆盖过期的用户 profile 文件。"""
+    user_dir = _get_user_profiles_dir(server)
+    for rel_path, profile_type, filename, name, uv, bv, _changelog in outdated:
+        user_path = os.path.join(user_dir, profile_type, filename)
+        with server.open_bundled_file(rel_path) as src:
+            with open(user_path, 'wb') as dst:
+                shutil.copyfileobj(src, dst)
+        server.logger.info(
+            server.rtr(f'{PLUGIN_ID}.sync.updated_profile', name, uv, bv)
+        )
 
 
 # =============================================================================
@@ -346,6 +386,28 @@ def _register_commands(server: PluginServerInterface):
             _handler.set_debug(False)
             src.reply(server.rtr(f'{PLUGIN_ID}.debug.off'))
 
+    def cmd_update(src):
+        global _update_pending_at
+        outdated = _find_outdated_profiles(server)
+        if not outdated:
+            src.reply(server.rtr(f'{PLUGIN_ID}.update.none'))
+            _update_pending_at = None
+            return
+
+        now = time.time()
+        if _update_pending_at is not None and now - _update_pending_at <= 10:
+            _overwrite_outdated_profiles(server, outdated)
+            _update_pending_at = None
+            server.reload_plugin(PLUGIN_ID)
+            return
+
+        _update_pending_at = now
+        lines = [server.rtr(f'{PLUGIN_ID}.update.pending_header')]
+        for _, _, _, name, uv, bv, _changelog in outdated:
+            lines.append(server.rtr(f'{PLUGIN_ID}.update.pending_item', name, uv, bv))
+        lines.append(server.rtr(f'{PLUGIN_ID}.update.pending_footer', prefix))
+        src.reply(RTextList(*[RText(line + '\n') for line in lines]))
+
     server.register_command(
         Literal(prefix).runs(cmd_status).then(
             Literal('reload').requires(
@@ -360,7 +422,13 @@ def _register_commands(server: PluginServerInterface):
             ).then(
                 Literal('off').runs(cmd_debug_off)
             )
+        ).then(
+            Literal('update').requires(
+                lambda src: src.has_permission(_config.admin_permission),
+                failure_message_getter=lambda: server.rtr(f'{PLUGIN_ID}.permission_denied'),
+            ).runs(cmd_update)
         )
     )
     server.register_help_message(prefix, server.rtr(f'{PLUGIN_ID}.help.unified_handler'))
     server.register_help_message(prefix + ' debug', server.rtr(f'{PLUGIN_ID}.help.debug'))
+    server.register_help_message(prefix + ' update', server.rtr(f'{PLUGIN_ID}.help.update'))

@@ -1,12 +1,12 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/alex3236/UnifiedHandler/main/profile.schema.json
 name: "commandblock"
-version: "1.0.0"
-changelog: "v1.0.0: Initial release"
+version: "1.0.1"
+changelog: "v1.0.1: 兼容 [Not Secure] 前缀"
 description: "使函数 ([Server]) 和命令方块 ([@]) 能使用 MCDR 命令"
 
 parse_server_stdout:
   pseudo_players:
-    - pattern: '\[(?P<name>Server)\] (?P<message>.*)'
+    - pattern: '(\[Not Secure\] )?\[(?P<name>Server)\] (?P<message>.*)'
       player_name: '"!function"'
-    - pattern: '\[(?P<name>@)\] (?P<message>.*)'
+    - pattern: '(\[Not Secure\] )?\[(?P<name>@)\] (?P<message>.*)'
       player_name: '"!commandblock"'

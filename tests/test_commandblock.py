@@ -74,3 +74,21 @@ class TestCommandblockProfile(unittest.TestCase):
         )
         self.assertEqual('"!function"', info.player)
         self.assertEqual('list', info.content)
+
+    # ── [Not Secure] prefix ──
+
+    def test_commandblock_not_secure(self):
+        info = parse_line(
+            self.handler,
+            '[09:00:00] [Server thread/INFO]: [Not Secure] [@] !!MCDR'
+        )
+        self.assertEqual('"!commandblock"', info.player)
+        self.assertEqual('!!MCDR', info.content)
+
+    def test_function_not_secure(self):
+        info = parse_line(
+            self.handler,
+            '[09:00:00] [Server thread/INFO]: [Not Secure] [Server] list'
+        )
+        self.assertEqual('"!function"', info.player)
+        self.assertEqual('list', info.content)

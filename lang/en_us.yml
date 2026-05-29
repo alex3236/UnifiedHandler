@@ -16,8 +16,9 @@ unified_handler:
     installed_profile: "Installed builtin profile: {}/{}"
     update_available: 'Builtin profile update available: "{}" (v{} → v{})'
     changelog_prefix: "  Changelog: {}"
-    update_instruction: '  To update: delete "{}" and reload the plugin'
+    update_reminder: "§r{0} builtin profile(s) can be updated. Run §6{1} update§r to apply"
     schema_failed: "Schema deployment failed: {}"
+    updated_profile: 'Builtin profile updated: "{}" (v{} → v{})'
   reload:
     reloaded: "Unified Handler config reloaded"
   help:
@@ -25,6 +26,13 @@ unified_handler:
     reload: "Reload Unified Handler config"
     status: "Show current handler configuration"
     debug: "Toggle debug output"
+    update: "Update and overwrite outdated builtin profiles"
+  update:
+    none: "No builtin profiles are newer than current versions"
+    pending_header: "The following builtin profiles have newer versions:"
+    pending_item: "  {} v{} → v{}"
+    pending_changelog: "    Changelog: {}"
+    pending_footer: "§eRun §6{0} update§e again within 10s to confirm overwrite§r"
   status:
     title: "§bUnified Handler§r"
     auto_format: "auto → {}"

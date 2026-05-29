@@ -16,8 +16,9 @@ unified_handler:
     installed_profile: "已安装内置 profile：{}/{}"
     update_available: '内置 profile 有可用更新："{}"（v{} → v{}）'
     changelog_prefix: "  更新日志：{}"
-    update_instruction: '  更新方法：删除 "{}" 并重载插件'
+    update_reminder: "§r共有 {0} 个内置 profile 可更新。执行 §6{1} update§r 以更新并覆盖"
     schema_failed: "Schema 部署失败：{}"
+    updated_profile: '已更新内置 profile "{}"（v{} → v{}）'
   reload:
     reloaded: "UnifiedHandler 配置已重载"
   help:
@@ -25,6 +26,13 @@ unified_handler:
     reload: "重载 UnifiedHandler 配置"
     status: "显示当前 UnifiedHandler 配置"
     debug: "切换调试输出"
+    update: "更新并覆盖过期的内置 profile"
+  update:
+    none: "所有内置 profile 均未更新版本"
+    pending_header: "以下内置 profile 存在新版本："
+    pending_item: "  {} v{} → v{}"
+    pending_changelog: "    更新日志：{}"
+    pending_footer: "§e10 秒内再次执行 §6{0} update§e 以确认覆盖§r"
   status:
     title: "§bUnifiedHandler§r"
     auto_format: "auto → {}"
