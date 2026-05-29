@@ -113,6 +113,8 @@ debug: false           # set to true to enable debug output
 
 UnifiedHandler ships with profiles for common server setups. Thanks to the original plugin authors.
 
+Since these haven't been fully tested on a live server, some profiles might have issues. If you find that any features aren't working as advertised during use, please report it in an Issue.
+
 ### Base
 
 | Name | File | For | Credits |
