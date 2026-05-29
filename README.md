@@ -48,7 +48,7 @@ Handler = Base（服务端类型，选一个）⊕ Features（额外功能，随
 !!MCDR plugin install unified_handler
 ```
 
-然后 `!!MCDR reload` 重载 MCDR，插件会自动生成 `config/unified_handler/config.yml` 并释放内置 profiles。
+插件会自动生成 `config/unified_handler/config.yml` 并释放内置 profiles，无需手动重载。
 
 也可以手动安装：把 `.mcdr` 文件放进 `plugins/` 目录，然后重载 MCDR。
 

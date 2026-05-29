@@ -48,7 +48,7 @@ Run in the MCDR console:
 !!MCDR plugin install unified_handler
 ```
 
-Then `!!MCDR reload` — the plugin auto-generates `config/unified_handler/config.yml` and deploys built-in profiles.
+The plugin auto-generates `config/unified_handler/config.yml` and deploys built-in profiles — no manual reload needed.
 
 Alternatively, drop the `.mcdr` file into the `plugins/` directory and reload MCDR.
 
