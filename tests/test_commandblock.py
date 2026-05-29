@@ -24,7 +24,7 @@ class TestCommandblockProfile(unittest.TestCase):
             self.handler,
             '[09:00:00] [Server thread/INFO]: [Server] say hello'
         )
-        self.assertEqual('"!function"', info.player)
+        self.assertEqual('!function', info.player)
         self.assertEqual('say hello', info.content)
 
     def test_commandblock_pseudo_player(self):
@@ -32,7 +32,7 @@ class TestCommandblockProfile(unittest.TestCase):
             self.handler,
             '[09:00:00] [Server thread/INFO]: [@] time set day'
         )
-        self.assertEqual('"!commandblock"', info.player)
+        self.assertEqual('!commandblock', info.player)
         self.assertEqual('time set day', info.content)
 
     # ── normal player ──
@@ -62,7 +62,7 @@ class TestCommandblockProfile(unittest.TestCase):
             handler,
             '[00:53:00] [Server thread/INFO] [minecraft/DedicatedServer]: [@] help'
         )
-        self.assertEqual('"!commandblock"', info.player)
+        self.assertEqual('!commandblock', info.player)
         self.assertEqual('help', info.content)
 
     def test_works_with_bukkit(self):
@@ -72,7 +72,7 @@ class TestCommandblockProfile(unittest.TestCase):
             handler,
             '[00:12:10 INFO]: [Server] list'
         )
-        self.assertEqual('"!function"', info.player)
+        self.assertEqual('!function', info.player)
         self.assertEqual('list', info.content)
 
     # ── [Not Secure] prefix ──
@@ -82,7 +82,7 @@ class TestCommandblockProfile(unittest.TestCase):
             self.handler,
             '[09:00:00] [Server thread/INFO]: [Not Secure] [@] !!MCDR'
         )
-        self.assertEqual('"!commandblock"', info.player)
+        self.assertEqual('!commandblock', info.player)
         self.assertEqual('!!MCDR', info.content)
 
     def test_function_not_secure(self):
@@ -90,5 +90,5 @@ class TestCommandblockProfile(unittest.TestCase):
             self.handler,
             '[09:00:00] [Server thread/INFO]: [Not Secure] [Server] list'
         )
-        self.assertEqual('"!function"', info.player)
+        self.assertEqual('!function', info.player)
         self.assertEqual('list', info.content)

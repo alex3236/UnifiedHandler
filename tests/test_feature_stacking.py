@@ -37,7 +37,7 @@ class TestFeatureStacking(unittest.TestCase):
             handler,
             '[09:00:00] [Server thread/INFO]: [@] time set 0'
         )
-        self.assertEqual('"!commandblock"', info.player)
+        self.assertEqual('!commandblock', info.player)
         self.assertEqual('time set 0', info.content)
 
         # Title prefix + team prefix combined
@@ -61,7 +61,7 @@ class TestFeatureStacking(unittest.TestCase):
             handler,
             '[12:34:56] [Server thread/INFO] []: [@] help'
         )
-        self.assertEqual('"!commandblock"', info.player)
+        self.assertEqual('!commandblock', info.player)
         self.assertEqual('help', info.content)
 
     def test_leaves_with_chat_prefixes(self):
@@ -101,7 +101,7 @@ class TestFeatureStacking(unittest.TestCase):
             handler,
             '[09:00:00] [Server thread/INFO]: [@] time set day'
         )
-        self.assertEqual('"!commandblock"', info.player)
+        self.assertEqual('!commandblock', info.player)
 
         info = parse_line(
             handler,
