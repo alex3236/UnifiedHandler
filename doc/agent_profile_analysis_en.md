@@ -8,7 +8,7 @@ If manual troubleshooting takes too long, you can have an AI agent analyze the s
 
 To produce a clean log for the AI, do the troubleshooting in a dedicated session:
 
-- **Shut down MCDR** (`!!MCDR stop`)
+- **Shut down MCDR** (`stop` or ^C)
 - Enable logging in MCDR's `config.yml` at the instance root:
 
   ```yaml
@@ -16,7 +16,7 @@ To produce a clean log for the AI, do the troubleshooting in a dedicated session
   ```
 
 - Set `debug: true` in `config/unified_handler/config.yml`
-- **Start MCDR**, then follow the [Handler Verification Guide](handler_troubleshooting_en.md) and complete every test (`!!MCDR status`, normal player chat, prefixed player chat, etc.). **Do not play normally** — only perform the tests from the guide, then shut down MCDR
+- **Start MCDR**, then follow the [Handler Verification Guide](handler_troubleshooting_en.md) and complete every test (`!!MCDR`, normal player chat, prefixed player chat, etc.). **Do not play normally** — only perform the tests from the guide, then shut down MCDR
 
 This gives you a `logs/MCDR.log` containing only the test output. Then point the agent to your MCDR instance directory and use the following prompt:
 

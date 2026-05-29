@@ -44,10 +44,10 @@ player_msg: "玩家名" "消息内容" (base)
 使用 MCDR 自带的 `!!MCDR` 命令（无需权限），在游戏内执行：
 
 ```
-!!MCDR status
+!!MCDR
 ```
 
-**在游戏内执行**此命令，应收到 tellraw 消息。如果有响应，说明 `send_message_command` 工作正常。
+应收到 tellraw 回复。有响应说明 `send_message_command` 工作正常。
 
 如果游戏内无响应，检查：
 
@@ -96,7 +96,7 @@ player_msg: "玩家名" "消息内容" (base)
 
 ## 3. 验证服务器生命周期
 
-MCDR 停止时（`!!MCDR stop` 或自然停止），UnifiedHandler 会输出类似这样的清单：
+MCDR 停止时（`stop` 或自然停止），UnifiedHandler 会输出类似这样的清单：
 
 ```
 === Lifecycle Status ===
@@ -135,7 +135,7 @@ MCDR 停止时（`!!MCDR stop` 或自然停止），UnifiedHandler 会输出类�
 
 - [ ] **启动前** `config.yml` 中设置 `debug: true`，启动后**不要 reload 插件**
 - [ ] `!!uh status` 显示的 handler 和 features 列表正确
-- [ ] `!!MCDR status` 在游戏内有响应（验证 tellraw 正常）
+- [ ] `!!MCDR` 在游戏内有响应
 - [ ] 普通玩家发言有 `player_msg` 输出
 - [ ] **带前缀的玩家**能正常使用 `!!MCDR` 命令（如果不通则启用 `chat_prefixes` feature，还不行则编写自定义 feature）
 - [ ] 服务器停止后生命周期报告中关键项（`server_version`、`startup_done`）为 √

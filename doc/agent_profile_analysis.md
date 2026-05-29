@@ -8,7 +8,7 @@
 
 为了获得一份干净的日志供 AI 分析，建议单独跑一次排查流程：
 
-- **关闭 MCDR**（`!!MCDR stop`）
+- **关闭 MCDR**（`stop` 或 ^C）
 
 - 在 MCDR 实例根目录的 `config.yml` 中启用日志记录：
   
@@ -18,7 +18,7 @@
 
 - 在 `config/unified_handler/config.yml` 中设置 `debug: true`
 
-- **启动 MCDR**，然后按照 [Handler 工作状态验证指南](handler_troubleshooting.md) 逐一完成所有测试（`!!MCDR status`、普通玩家发言、带前缀玩家发言等）。**不要进行正常游戏**——仅做排查指南中的测试，完成后即关闭 MCDR
+- **启动 MCDR**，然后按照 [Handler 工作状态验证指南](handler_troubleshooting.md) 逐一完成所有测试（`!!MCDR`、普通玩家发言、带前缀玩家发言等）。**不要进行正常游戏**——仅做排查指南中的测试，完成后即关闭 MCDR
 
 这样 `logs/MCDR.log` 中只有这一轮测试的输出。然后让 agent 进入你的 MCDR 实例目录，将以下提示词发给 agent：
 

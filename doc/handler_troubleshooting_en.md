@@ -44,10 +44,10 @@ player_msg: "PlayerName" "message" (base)
 Use MCDR's built-in `!!MCDR` command (no permission required). Run it in-game:
 
 ```
-!!MCDR status
+!!MCDR
 ```
 
-**If run in-game**, you should receive a tellraw message. A response means `send_message_command` works correctly.
+You should receive a tellraw response. A reply means `send_message_command` works correctly.
 
 No in-game response? Check:
 
@@ -96,7 +96,7 @@ If you enabled the `commandblock` feature:
 
 ## 3. Verify Server Lifecycle
 
-When MCDR stops (`!!MCDR stop` or natural shutdown), UnifiedHandler prints a summary:
+When MCDR stops (`stop` or natural shutdown), UnifiedHandler prints a summary:
 
 ```
 === Lifecycle Status ===
@@ -135,7 +135,7 @@ If the lifecycle report shows any ×, troubleshoot in this order:
 
 - [ ] **Before starting MCDR**: set `debug: true` in `config.yml`. **Do not reload the plugin** during the session
 - [ ] `!!uh status` shows the correct handler and features
-- [ ] `!!MCDR status` gets a response in-game (verifies tellraw works)
+- [ ] `!!MCDR` gets a response in-game
 - [ ] Normal player chat produces `player_msg` output
 - [ ] **Prefixed players** can use `!!MCDR` commands (if not, enable `chat_prefixes` feature; if still broken, write a custom feature)
 - [ ] After server stop, lifecycle report shows √ for critical items (`server_version`, `startup_done`)
