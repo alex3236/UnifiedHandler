@@ -137,6 +137,14 @@ UnifiedHandler 内置了一些常见的处理情景。感谢这些开发者的�
 
 详见 [自定义 Profile 指南](doc/custom_profile.md)。
 
+## 贡献你的 Profile
+
+如果你写的 profile 有通用场景（某个服务端的适配、某个常见功能的增强），欢迎通过 PR 提交。提交前请确认：
+
+- 文件放在 `resources/builtin_profiles/base/` 或 `features/` 下
+- 包含 `name`、`version`、`changelog`、`description` 字段
+- 若适配的是已有插件的 handler，在 PR 中注明原始作者
+
 ## 命令
 
 *所有 `!!uh` 命令均需管理员权限。*

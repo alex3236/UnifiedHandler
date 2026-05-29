@@ -137,6 +137,14 @@ Need to adapt a custom server? Just write a few lines of YAML. We provide a full
 
 Check out the [Custom Profile Guide](doc/custom_profile_en.md).
 
+## Contribute Your Profile
+
+If your profile serves a general use case (a server adapter, a common feature enhancement), we welcome PRs. Before submitting:
+
+- Place the file under `resources/builtin_profiles/base/` or `features/`
+- Include `name`, `version`, `changelog`, and `description` fields
+- If adapting an existing plugin's handler, credit the original author in the PR
+
 ## Commands
 
 *All `!!uh` commands require admin permission.*
