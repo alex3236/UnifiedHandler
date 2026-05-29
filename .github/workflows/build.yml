@@ -23,6 +23,13 @@ jobs:
       - name: Run tests
         run: python -m pytest tests/ -v
 
+      - name: Validate builtin profiles
+        run: |
+          pip install check-jsonschema
+          check-jsonschema --schemafile profile.schema.json \
+            resources/builtin_profiles/base/*.yml \
+            resources/builtin_profiles/features/*.yml
+
       - name: Pack plugin
         run: python -m mcdreforged pack
 
