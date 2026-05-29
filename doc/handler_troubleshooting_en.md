@@ -91,8 +91,8 @@ If you enabled the `commandblock` feature:
 
 | Scenario | Action | Expected |
 |---|---|---|
-| Command block | Place a command block, run any command | Console shows `[Server]` or `[@]` line; debug shows `pseudo_player: "!commandblock"` |
-| Functions | Run a function containing `/say` | Debug shows `pseudo_player: "!function"` |
+| Command block | Use a command block to run `say <message>` | Console shows `[Server]` or `[@]` line; debug shows `pseudo_player: "!commandblock"` |
+| Functions | Run `say <message>` from a function via console | Debug shows `pseudo_player: "!function"` |
 
 ## 3. Verify Server Lifecycle
 

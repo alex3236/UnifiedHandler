@@ -131,7 +131,9 @@ UnifiedHandler ships with profiles for common server setups. Thanks to the origi
 
 ## Custom Profiles
 
-Need to adapt a custom server? Just write a few lines of YAML. We provide a full [JSON Schema](profile.schema.json) for autocompletion and validation. Check out the [Custom Profile Guide](doc/custom_profile_en.md).
+Need to adapt a custom server? Just write a few lines of YAML. We provide a full [JSON Schema](profile.schema.json) for autocompletion and validation.
+
+Check out the [Custom Profile Guide](doc/custom_profile_en.md).
 
 ## Commands
 

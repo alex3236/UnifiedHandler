@@ -91,8 +91,8 @@ player_msg: "玩家名" "消息内容" (base)
 
 | 测试场景 | 操作 | 预期 |
 |---|---|---|
-| 命令方块 | 放置命令方块，执行任意命令 | 控制台出现 `[Server]` 或 `[@]` 开头行；debug 显示 `pseudo_player: "!commandblock"` |
-| 函数 | 运行包含 `/say` 的函数 | debug 显示 `pseudo_player: "!function"` |
+| 命令方块 | 用命令方块执行 `say <消息内容>` | 控制台出现 `[Server]` 或 `[@]` 开头行；debug 显示 `pseudo_player: "!commandblock"` |
+| 函数 | 从控制台运行包含 `say <消息内容>` | debug 显示 `pseudo_player: "!function"` |
 
 ## 3. 验证服务器生命周期
 

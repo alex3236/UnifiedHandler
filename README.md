@@ -131,7 +131,9 @@ UnifiedHandler 内置了一些常见的处理情景。感谢这些开发者的�
 
 ## 自定义 Profile
 
-想适配自己的服务端？只需要写几行 YAML。我们有完整的 [JSON Schema](profile.schema.json) 帮你自动补全和校验。详见 [自定义 Profile 指南](doc/custom_profile.md)。
+想适配自己的服务端？只需要写几行 YAML。我们有完整的 [JSON Schema](profile.schema.json) 帮你自动补全和校验。
+
+详见 [自定义 Profile 指南](doc/custom_profile.md)。
 
 ## 命令
 
