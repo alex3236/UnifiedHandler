@@ -36,7 +36,7 @@ Profile 是一个 YAML 文件，告诉 Unified Handler 如何解析你服务端�
 大多数支持 YAML 的编辑器（VS Code、JetBrains 系列）都能识别内联 `$schema` 引用。你也可以在 profile 文件顶部加一行：
 
 ```yaml
-# yaml-language-server: $schema=../../profile.schema.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/alex3236/UnifiedHandler/main/profile.schema.json
 ```
 
 ## 快速上手：写一个 Feature

@@ -36,7 +36,7 @@ A [`profile.schema.json`](../profile.schema.json) lives at the plugin root. Wire
 Most YAML-aware editors (VS Code, JetBrains) pick up `$schema` references automatically. You can also add to the top of your profile:
 
 ```yaml
-# yaml-language-server: $schema=../../profile.schema.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/alex3236/UnifiedHandler/main/profile.schema.json
 ```
 
 ## Quick start: write a Feature

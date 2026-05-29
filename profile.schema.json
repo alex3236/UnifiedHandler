@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://raw.githubusercontent.com/MCDReforged/UnifiedHandler/main/profile.schema.json",
+  "$id": "https://raw.githubusercontent.com/alex3236/UnifiedHandler/main/profile.schema.json",
   "title": "Unified Handler Profile Schema",
   "description": "JSON Schema for UnifiedHandler base and feature profiles. Validates both Base (Full/Derived) and Feature YAML files under resources/builtin_profiles/.",
   "type": "object",

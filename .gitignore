@@ -17,3 +17,6 @@ desktop.ini
 
 *.mcdr
 tmp/
+
+# opencode config (per-user, not tracked)
+opencode.json

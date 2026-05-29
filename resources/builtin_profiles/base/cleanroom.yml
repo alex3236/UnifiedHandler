@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/alex3236/UnifiedHandler/main/profile.schema.json
 name: "cleanroom"
 version: "1.0.0"
 changelog: "v1.0.0: Initial release"
