@@ -17,12 +17,14 @@ unified_handler:
     update_available: 'Builtin profile update available: "{}" (v{} → v{})'
     changelog_prefix: "  Changelog: {}"
     update_instruction: '  To update: delete "{}" and reload the plugin'
+    schema_failed: "Schema deployment failed: {}"
   reload:
     reloaded: "Unified Handler config reloaded"
   help:
     unified_handler: "Manage Unified Handler plugin"
     reload: "Reload Unified Handler config"
     status: "Show current handler configuration"
+    debug: "Toggle debug output"
   status:
     title: "§bUnified Handler§r"
     auto_format: "auto → {}"
@@ -31,3 +33,6 @@ unified_handler:
     features: "Active features"
     none: "(none)"
     mcdr_handler: "MCDR configured handler"
+  debug:
+    on: "§aDebug ON§r"
+    off: "§cDebug OFF§r"

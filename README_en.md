@@ -51,7 +51,8 @@ Early on, this project considered exposing hooks so other plugins could inject l
 
 Edit `config/unified_handler/config.yml`
 
-**Case 1: MCDR's built-in handler covers your server**
+<details open>
+<summary><strong>✅ Case 1: MCDR's built-in handler covers your server</strong></summary>
 
 [MCDR's built-in handlers](https://docs.mcdreforged.com/en/latest/configuration.html#handler) (Vanilla / Forge / Bukkit / Velocity, etc.) handle most cases. You just need some extensions (like Team prefix handling):
 
@@ -67,7 +68,10 @@ features:
   - commandblock      # stack as many as you like
 ```
 
-**Case 2: MCDR's built-in handler can't handle your server**
+</details>
+
+<details>
+<summary><strong>🔧 Case 2: MCDR's built-in handler can't handle your server</strong></summary>
 
 For servers like BDS, Leaves, etc. — use the plugin's built-in profiles:
 
@@ -87,12 +91,17 @@ If the built-in profiles aren't enough, you can always [write your own](doc/cust
 base_handler: "my_custom_server"
 ```
 
+</details>
+
 Other config fields:
 
 ```yaml
 command_prefix: "!!uh"
 admin_permission: 3
+debug: false         # set to true to enable debug output
 ```
+
+**▶ Verify**: After configuration, run through the [Handler Verification Guide](doc/handler_troubleshooting_en.md) to confirm everything is working.
 
 ## Built-in Profiles
 
@@ -125,6 +134,7 @@ Need to adapt a custom server? Just write a few lines of YAML. We provide a full
 | `!!uh` | Show current Base and active Features |
 | `!!uh status` | Same as above |
 | `!!uh reload` | Reload config and profiles |
+| `!!uh debug [on\|off]` | Toggle debug output |
 
 ## Compatibility
 

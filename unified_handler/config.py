@@ -18,3 +18,6 @@ class PluginConfig(Serializable):
 
     # 管理命令所需的最低权限等级
     admin_permission: int = 3
+
+    # 调试模式 - 打印 handler 触发的所有事件和修改
+    debug: bool = False

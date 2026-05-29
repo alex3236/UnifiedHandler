@@ -4,6 +4,9 @@
 
 If your server isn't in the built-in list, or you want to tweak a parsing behavior — you're in the right place. Just write a profile.
 
+> [!TIP]
+> Don't want to write manually? Let an AI agent analyze your logs and write a profile: [AI-Assisted Profile Analysis and Authoring](agent_profile_analysis_en.md)
+
 ## The big picture
 
 A profile is a YAML file that tells Unified Handler how to parse your server's log output.

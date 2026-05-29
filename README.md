@@ -51,7 +51,8 @@ Handler = Base（服务端类型，选一个）⊕ Features（额外功能，随
 
 编辑 `config/unified_handler/config.yml`
 
-**情况一：MCDR 自带的 handler 能处理你的服务端**
+<details open>
+<summary><strong>✅ 情况一：MCDR 自带的 handler 能处理你的服务端</strong></summary>
 
 如果由 [MCDR 自带的 handler](https://docs.mcdreforged.com/zh-cn/latest/configuration.html#handler) 能覆盖大部分情况，而你只需要一些扩展（比如处理 Team 前缀）：
 
@@ -67,7 +68,10 @@ features:
   - commandblock      # 可以多加几个，随意组合
 ```
 
-**情况二：MCDR 自带的 handler 无法处理你的服务端**
+</details>
+
+<details>
+<summary><strong>🔧 情况二：MCDR 自带的 handler 无法处理你的服务端</strong></summary>
 
 比如 BDS、Leaves 等，使用本插件内置的 profile：
 
@@ -87,12 +91,17 @@ features:
 base_handler: "my_custom_server"
 ```
 
+</details>
+
 其他配置项：
 
 ```yaml
 command_prefix: "!!uh"
 admin_permission: 3
+debug: false         # 设为 true 开启调试输出
 ```
+
+**▶ 验证配置**：配置完成后，建议按照 [Handler 工作状态验证指南](doc/handler_troubleshooting.md) 跑一遍检查，确认所有项目都正常。
 
 ## 内置 Profile
 
@@ -125,6 +134,7 @@ UnifiedHandler 内置了一些常见的处理情景。感谢这些开发者的�
 | `!!uh`        | 查看当前使用的 Base 和启用的 Features |
 | `!!uh status` | 同上                         |
 | `!!uh reload` | 重载配置和 profiles             |
+| `!!uh debug [on\|off]`  | 切换调试输出              |
 
 ## 兼容性
 

@@ -4,6 +4,9 @@
 
 如果你使用的服务端不在内置支持列表中，或是想调整某个解析行为——来对地方了，写个 profile 就好。
 
+> [!TIP]
+> 不想手动写？让 AI agent 帮你分析日志并编写 profile：[借助 AI Agent 分析和编写 Profile](agent_profile_analysis.md)
+
 ## 概念速览
 
 Profile 是一个 YAML 文件，告诉 Unified Handler 如何解析你服务端的日志输出。

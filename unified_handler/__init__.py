@@ -22,6 +22,7 @@ from ruamel.yaml import YAML
 
 from mcdreforged.api.all import PluginServerInterface
 from mcdreforged.api.rtext import RTextList, RText, RStyle
+from mcdreforged.minecraft.rtext.style import RColor
 from mcdreforged.api.command import Literal
 
 from .config import PluginConfig
@@ -46,6 +47,9 @@ if TYPE_CHECKING:
     from mcdreforged.handler.server_handler import ServerHandler
 
 PLUGIN_ID = 'unified_handler'
+
+_handler: Optional['UnifiedHandler'] = None
+_config: Optional[PluginConfig] = None
 
 # =============================================================================
 # Profile 同步
@@ -160,59 +164,50 @@ def _sync_builtin_profiles(server: PluginServerInterface) -> None:
                     )
 
 
+def _deploy_schema(server: PluginServerInterface) -> None:
+    """将内置的 profile.schema.json 部署到插件配置文件夹（始终覆盖）。"""
+    schema_path = os.path.join(server.get_data_folder(), 'profile.schema.json')
+    try:
+        with server.open_bundled_file('profile.schema.json') as src:
+            with open(schema_path, 'wb') as dst:
+                shutil.copyfileobj(src, dst)
+    except Exception:
+        server.logger.warning(server.rtr(f'{PLUGIN_ID}.sync.schema_failed', schema_path))
+
+
 # =============================================================================
 # Handler 构建
 # =============================================================================
 
-def _get_config(server: PluginServerInterface) -> PluginConfig:
-    return server.load_config_simple(
-        file_name='config.yml',
-        target_class=PluginConfig,
-    )
-
-
 def _resolve_handler_instance(name: str, server: PluginServerInterface) -> Optional['ServerHandler']:
-    """尝试解析 handler 名称为实例。返回 None 表示未找到。"""
-    # 内置 handler class map
     handler = instantiate_handler(name)
     if handler is not None:
         return handler
-
-    # MCDR 注册表（custom_handlers）
     handler = get_handler_from_mcdr_registry(name, server)
     if handler is not None:
         return handler
-
-    # Python 类路径
     handler = instantiate_handler_by_class_path(name)
     if handler is not None:
         return handler
-
     return None
 
 
 def _resolve_base_handler(config: PluginConfig, server: PluginServerInterface) -> 'ServerHandler':
-    """解析 base handler（wrapper 模式下使用），含日志和回退"""
     base_name = config.base_handler
-
     if base_name == 'auto':
         mcdr_config = server.get_mcdr_config()
         base_name = mcdr_config.get('handler', 'basic_handler')
         server.logger.info(server.rtr(f'{PLUGIN_ID}.auto_detected', base_name))
-
     handler = _resolve_handler_instance(base_name, server)
     if handler is not None:
         server.logger.info(server.rtr(f'{PLUGIN_ID}.base_handler', base_name))
         return handler
-
-    # 回退
     server.logger.warning(server.rtr(f'{PLUGIN_ID}.base_not_found', base_name))
     from mcdreforged.handler.impl import BasicHandler
     return BasicHandler()
 
 
-def _build(server: PluginServerInterface) -> UnifiedHandler:
-    config = _get_config(server)
+def _build(server: PluginServerInterface, config: PluginConfig) -> UnifiedHandler:
     profiles_dir = _get_user_profiles_dir(server)
 
     # 加载 feature profiles
@@ -227,7 +222,10 @@ def _build(server: PluginServerInterface) -> UnifiedHandler:
         base_dict = load_base_profile(profiles_dir, config.base_handler)
         if base_dict is None:
             server.logger.error(server.rtr(f'{PLUGIN_ID}.base_profile_not_found', config.base_handler))
-            return UnifiedHandler(BasicHandler(), compile_features(feature_dicts), mode='wrapper')
+            handler = UnifiedHandler(BasicHandler(), compile_features(feature_dicts), mode='wrapper',
+                                     logger=server.logger, debug=config.debug)
+            _store_handler(handler)
+            return handler
 
         extends = base_dict.get('extends')
 
@@ -250,14 +248,25 @@ def _build(server: PluginServerInterface) -> UnifiedHandler:
             compiled.merge_feature(fd)
         server.logger.info(server.rtr(f'{PLUGIN_ID}.base_handler', config.base_handler))
         server.logger.info(server.rtr(f'{PLUGIN_ID}.features', ', '.join(config.features) or '(none)'))
-        return UnifiedHandler(parent, compiled, mode=mode)
+        handler = UnifiedHandler(parent, compiled, mode=mode,
+                                 logger=server.logger, debug=config.debug)
+        _store_handler(handler)
+        return handler
 
     # Wrapper 模式 — 内置或自定义 handler + feature 叠加
     base = _resolve_base_handler(config, server)
     compiled = compile_features(feature_dicts)
     server.logger.info(server.rtr(f'{PLUGIN_ID}.features', ', '.join(config.features) or '(none)'))
     server.logger.info(server.rtr(f'{PLUGIN_ID}.profile_loaded', len(feature_dicts)))
-    return UnifiedHandler(base, compiled, mode='wrapper')
+    handler = UnifiedHandler(base, compiled, mode='wrapper',
+                             logger=server.logger, debug=config.debug)
+    _store_handler(handler)
+    return handler
+
+
+def _store_handler(handler: UnifiedHandler) -> None:
+    global _handler
+    _handler = handler
 
 
 def _list_base_names(profiles_dir: str) -> list:
@@ -271,28 +280,41 @@ def _list_base_names(profiles_dir: str) -> list:
 # =============================================================================
 
 def on_load(server: PluginServerInterface, prev_module):
+    global _config
+    _config = server.load_config_simple(
+        file_name='config.yml',
+        target_class=PluginConfig,
+    )
+
     # 同步内置 profiles
     _sync_builtin_profiles(server)
 
+    # 部署 schema（始终覆盖，确保是最新版）
+    _deploy_schema(server)
+
     # 构建并注册 handler
-    handler = _build(server)
+    handler = _build(server, _config)
     server.register_server_handler(handler)
     server.logger.info(server.rtr(f'{PLUGIN_ID}.handler_registered'))
 
     _register_commands(server)
 
 
+def on_mcdr_stop(server: PluginServerInterface):
+    if _handler is not None and _handler.is_debug_enabled():
+        for line in _handler.get_lifecycle_status():
+            server.logger.info(RText(line, color=RColor.gold).to_colored_text())
+
+
 def _register_commands(server: PluginServerInterface):
-    cfg = _get_config(server)
-    prefix = cfg.command_prefix
+    prefix = _config.command_prefix
 
     def cmd_status(src):
-        c = _get_config(server)
-        base = c.base_handler
+        base = _config.base_handler
         if base == 'auto':
             mcdr_config = server.get_mcdr_config()
             base = server.rtr(f'{PLUGIN_ID}.status.auto_format', mcdr_config.get('handler', '?'))
-        features = ', '.join(c.features) if c.features else server.rtr(f'{PLUGIN_ID}.status.none')
+        features = ', '.join(_config.features) if _config.features else server.rtr(f'{PLUGIN_ID}.status.none')
         label_base = server.rtr(f'{PLUGIN_ID}.status.base')
         label_features = server.rtr(f'{PLUGIN_ID}.status.features')
         src.reply(RTextList(
@@ -302,20 +324,43 @@ def _register_commands(server: PluginServerInterface):
         ))
 
     def cmd_reload(src):
-        c = _get_config(server)
-        if not src.has_permission(c.admin_permission):
+        if not src.has_permission(_config.admin_permission):
             src.reply(server.rtr(f'{PLUGIN_ID}.permission_denied'))
             return
         server.reload_plugin(PLUGIN_ID)
 
+    def cmd_debug_toggle(src):
+        if _handler is not None:
+            new_state = not _handler.is_debug_enabled()
+            _handler.set_debug(new_state)
+            status_text = server.rtr(f'{PLUGIN_ID}.debug.on') if new_state else server.rtr(f'{PLUGIN_ID}.debug.off')
+            src.reply(status_text)
+
+    def cmd_debug_on(src):
+        if _handler is not None:
+            _handler.set_debug(True)
+            src.reply(server.rtr(f'{PLUGIN_ID}.debug.on'))
+
+    def cmd_debug_off(src):
+        if _handler is not None:
+            _handler.set_debug(False)
+            src.reply(server.rtr(f'{PLUGIN_ID}.debug.off'))
+
     server.register_command(
         Literal(prefix).runs(cmd_status).then(
             Literal('reload').requires(
-                lambda src: src.has_permission(cfg.admin_permission),
+                lambda src: src.has_permission(_config.admin_permission),
                 failure_message_getter=lambda: server.rtr(f'{PLUGIN_ID}.permission_denied'),
             ).runs(cmd_reload)
         ).then(
             Literal('status').runs(cmd_status)
+        ).then(
+            Literal('debug').runs(cmd_debug_toggle).then(
+                Literal('on').runs(cmd_debug_on)
+            ).then(
+                Literal('off').runs(cmd_debug_off)
+            )
         )
     )
     server.register_help_message(prefix, server.rtr(f'{PLUGIN_ID}.help.unified_handler'))
+    server.register_help_message(prefix + ' debug', server.rtr(f'{PLUGIN_ID}.help.debug'))
